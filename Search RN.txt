@@ -1,0 +1,45 @@
+import React, { useState, useEffect } from 'react';
+import { View, TextInput, Text, FlatList } from 'react-native';
+
+const data = [
+  { id: '1', name: 'Apple' },
+  { id: '2', name: 'Banana' },
+  { id: '3', name: 'Carrot' },
+  { id: '4', name: 'Durian' },
+  { id: '5', name: 'Eggplant' },
+  { id: '6', name: 'Fig' },
+  { id: '7', name: 'Grape' },
+  { id: '8', name: 'Honeydew' },
+  { id: '9', name: 'Iceberg Lettuce' },
+  { id: '10', name: 'Jicama' },
+];
+
+const Search = () => {
+  const [filteredData, setFilteredData] = useState(data);
+  const [searchTerm, setSearchTerm] = useState('');
+
+  useEffect(() => {
+    const filteredData = data.filter(item =>
+      item.name.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+    setFilteredData(filteredData);
+  }, [searchTerm, data]);
+
+  return (
+    <View>
+      <TextInput
+        style={{ height: 40, borderColor: 'gray', borderWidth: 1 }}
+        onChangeText={setSearchTerm}
+        value={searchTerm}
+        placeholder="Search"
+      />
+      <FlatList
+        data={filteredData}
+        renderItem={({ item }) => <Text>{item.name}</Text>}
+        keyExtractor={item => item.id}
+      />
+    </View>
+  );
+};
+
+export default Search;

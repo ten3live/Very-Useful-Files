@@ -1,0 +1,1 @@
+mongodb+srv://ten3live:<password>@cluster0.cw3pdmb.mongodb.net/

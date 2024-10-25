@@ -1,0 +1,138 @@
+PHP Login Registration with Image Upload using MySQL
+Here's a basic example of how you could implement a login and registration system in PHP, along with image upload functionality, using MySQL as the database.
+
+First, you'll need to set up a MySQL database and create a table to store user information. Here's the SQL code for creating the table:
+
+sql
+
+CREATE TABLE users (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  name VARCHAR(50) NOT NULL,
+  email VARCHAR(50) NOT NULL UNIQUE,
+  password VARCHAR(255) NOT NULL,
+  image VARCHAR(255) NOT NULL
+);
+
+Register
+<?php
+
+if (isset($_POST['register'])) {
+  $name = $_POST['name'];
+  $email = $_POST['email'];
+  $password = password_hash($_POST['password'], PASSWORD_DEFAULT);
+  $image = $_FILES['image']['name'];
+  
+  $target = "images/".basename($image);
+  
+  if (move_uploaded_file($_FILES['image']['tmp_name'], $target)) {
+    $msg = "Image uploaded successfully";
+  } else {
+    $msg = "Failed to upload image";
+  }
+  
+  $query = "INSERT INTO users (name, email, password, image) VALUES ('$name', '$email', '$password', '$image')";
+  
+  if (mysqli_query($conn, $query)) {
+    $msg = "User registered successfully";
+  } else {
+    $msg = "Error: " . mysqli_error($conn);
+  }
+}
+
+?>
+
+
+
+Login
+<?php
+
+if (isset($_POST['login'])) {
+  $email = $_POST['email'];
+  $password = $_POST['password'];
+  
+  $query = "SELECT * FROM users WHERE email='$email'";
+  $result = mysqli_query($conn, $query);
+  
+  if (mysqli_num_rows($result) == 1) {
+    $user = mysqli_fetch_assoc($result);
+    if (password_verify($password, $user['password'])) {
+      $_SESSION['email'] = $user['email'];
+      $_SESSION['name'] = $user['name'];
+      $_SESSION['image'] = $user['image'];
+      header('location: welcome.php');
+    } else {
+      $msg = "Incorrect password";
+    }
+  } else {
+    $msg = "Email not found";
+  }
+}
+
+?>
+
+
+
+
+
+Here's an example of how to connect to a MySQL database using mysqli_connect():
+
+
+<?php
+
+$servername = "localhost";
+$username = "your_username";
+$password = "your_password";
+$dbname = "your_dbname";
+
+// Create connection
+$conn = mysqli_connect($servername, $username, $password, $dbname);
+
+// Check connection
+if (!$conn) {
+  die("Connection failed: " . mysqli_connect_error());
+}
+
+echo "Connected successfully";
+
+?>
+
+
+
+You should call session_start() at the beginning of each PHP script that needs to access session variables, before any output is sent to the browser.
+
+<?php
+
+session_start();
+
+if (!isset($_SESSION['email'])) {
+  $_SESSION['email'] = "";
+}
+
+if (!isset($_SESSION['name'])) {
+  $_SESSION['name'] = "";
+}
+
+if (!isset($_SESSION['image'])) {
+  $_SESSION['image'] = "";
+}
+
+?>
+
+
+HTML
+
+<!-- Login Form -->
+<form action="index.php" method="post">
+  <input type="email" name="email" placeholder="Email">
+  <input type="password" name="password" placeholder="Password">
+  <input type="submit" name="login" value="Login">
+</form>
+
+<!-- Registration Form -->
+<form action="index.php" method="post" enctype="multipart/form-data">
+  <input type="text" name="name" placeholder="Name">
+  <input type="email" name="email" placeholder="Email">
+  <input type="password" name="password" placeholder="Password">
+  <input type="file" name="image">
+  <input type="submit" name="register" value="Register">
+</form>

@@ -1,0 +1,161 @@
+npm install react-native-fs
+
+app/build.gradle
+implementation project(':react-native-fs')
+
+setting.gradle
+include ':react-native-fs'
+project(':react-native-fs').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-fs/android')
+
+
+react-native link react-native-fs
+
+
+import RNFS from 'react-native-fs';
+
+
+
+
+RNFS.writeFile('/path/to/file.txt', 'Hello world!', 'utf8')
+  .then(() => console.log('File created successfully!'))
+  .catch(error => console.log('Error creating file:', error));
+RNFS.readFile('/path/to/file.txt', 'utf8')
+  .then(content => console.log('File content:', content))
+  .catch(error => console.log('Error reading file:', error));
+RNFS.appendFile('/path/to/file.txt', '\nNew line of text', 'utf8')
+  .then(() => console.log('File updated successfully!'))
+  .catch(error => console.log('Error updating file:', error));
+RNFS.unlink('/path/to/file.txt')
+  .then(() => console.log('File deleted successfully!'))
+  .catch(error => console.log('Error deleting file:', error));
+
+
+import React, {useState, useEffect} from 'react';
+import {
+  SafeAreaView,
+  View,
+  Text,
+  Button,
+  FlatList,
+  TextInput,
+  StyleSheet,
+} from 'react-native';
+import RNFS from 'react-native-fs';
+
+const App = () => {
+  const [path, setPath] = useState(RNFS.ExternalStorageDirectoryPath);
+  const [files, setFiles] = useState([]);
+
+  useEffect(() => {
+    refreshFiles();
+  }, [path]);
+
+  const refreshFiles = () => {
+    RNFS.readdir(path)
+      .then(result => {
+        setFiles(result);
+      })
+      .catch(error => {
+        console.log('Error reading directory:', error);
+      });
+  };
+const openFolder = folder => {
+    setPath(folder.path);
+  };
+  const createFile = () => {
+    RNFS.writeFile(`${path}/newfile.txt`, 'Hello world!', 'utf8')
+      .then(() => {
+        console.log('File created successfully!');
+        refreshFiles();
+      })
+      .catch(error => {
+        console.log('Error creating file:', error);
+      });
+  };
+
+  const readFile = file => {
+    RNFS.readFile(`${path}/${file}`, 'utf8')
+      .then(content => {
+        console.log('File content:', content);
+      })
+      .catch(error => {
+        console.log('Error reading file:', error);
+      });
+  };
+
+  const updateFile = file => {
+    RNFS.appendFile(`${path}/${file}`, '\nNew line of text', 'utf8')
+      .then(() => {
+        console.log('File updated successfully!');
+        refreshFiles();
+      })
+      .catch(error => {
+        console.log('Error updating file:', error);
+      });
+  };
+
+  const deleteFile = file => {
+    RNFS.unlink(`${path}/${file}`)
+      .then(() => {
+        console.log('File deleted successfully!');
+        refreshFiles();
+      })
+      .catch(error => {
+        console.log('Error deleting file:', error);
+      });
+  };
+
+  const renderItem = ({item}) => (
+    <View style={styles.item}>
+      <Text style={styles.filename}>{item}</Text>
+      <Button title="Read" onPress={() => readFile(item)} />
+      <Button title="Update" onPress={() => updateFile(item)} />
+      <Button title="Delete" onPress={() => deleteFile(item)} />
+    </View>
+  );
+
+  return (
+    <SafeAreaView style={styles.container}>
+      <View style={styles.path}>
+        <Text>Path:</Text>
+        <TextInput
+          style={styles.input}
+          value={path}
+          onChangeText={setPath}
+        />
+        <Button title="Refresh" onPress={refreshFiles} />
+      </View>
+      <Button title="Create file" onPress={createFile} />
+      <FlatList
+        data={files}
+        renderItem={renderItem}
+        keyExtractor={item => item}
+      />
+    </SafeAreaView>
+  );
+};
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    padding: 10,
+  },
+  path: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 10,
+  },
+  input: {
+    flex: 1,
+    borderWidth: 1,
+    borderColor: '#ccc',
+    borderRadius: 5,
+    paddingHorizontal: 10,
+    marginLeft: 10,
+  },
+  item: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 10,
+    borderBottomWidth: 1,
+   

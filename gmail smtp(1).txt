@@ -1,0 +1,1 @@
+Incoming connections to the IMAP server at imap.gmail.com:993 and the POP server at pop.gmail.com:995 require SSL. The outgoing SMTP server, smtp.gmail.com, supports TLS. If your client begins with plain text, before issuing the STARTTLS command, use port 465 (for SSL), or port 587 (for TLS).

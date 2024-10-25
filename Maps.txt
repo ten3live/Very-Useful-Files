@@ -1,0 +1,314 @@
+import React, {useState, useEffect, useRef} from 'react';
+import {
+  View,
+  Text,
+  TextInput,
+  Button,
+  StyleSheet,
+  TouchableHighlight,
+  TouchableOpacity,
+} from 'react-native';
+import MapView, {Marker, Polyline} from 'react-native-maps';
+import {GooglePlacesAutocomplete} from 'react-native-google-places-autocomplete';
+import Autocomplete from 'react-native-autocomplete-input';
+
+const GOOGLE_MAPS_API_KEY = 'AIzaSyDypRVzxfjb2ga1nxskRKoFVnMEXAQX1k4';
+const MapScreen = () => {
+  const [LocationFrom, setLocationFrom] = useState('');
+  const [LocationTo, setLocationTo] = useState('');
+
+  const [markers, setMarkers] = useState([]);
+  const [polyline, setPolyline] = useState([]);
+  const [distance, setDistance] = useState('');
+  const [query, setQuery] = useState('');
+  const [locations, setLocations] = useState([]);
+  const placesRef = useRef(null);
+  const placesRef2 = useRef(null);
+
+  const fetchLocationSuggestions = query => {
+    const url = `https://maps.googleapis.com/maps/api/place/autocomplete/json?input=${query}&types=(cities)&key=${GOOGLE_MAPS_API_KEY}`;
+
+    return fetch(url)
+      .then(response => response.json())
+      .then(json => json.predictions)
+      .catch(error => {
+        console.error(error);
+        return [];
+      });
+  };
+
+  const handleQueryChange = text => {
+    setQuery(text);
+    fetchLocationSuggestions(text)
+      .then(
+        locations => setLocations(locations),
+        // console.log(locations[0].description),
+      )
+
+      .catch(error => console.log(error));
+  };
+
+  const handleLocationSelect = location => {
+    setQuery(location.description);
+    // Do something with the selected location
+  };
+  const handlePress = async () => {
+    try {
+      // Step 1: Get the directions using Google Maps Directions API
+      await fetch(
+        `https://maps.googleapis.com/maps/api/directions/json?origin=${LocationFrom}&destination=${LocationTo}&key=${GOOGLE_MAPS_API_KEY}`,
+      )
+        .then(response => response.json())
+        .then(async data => {
+          if (LocationTo !== '' && LocationFrom !== '') {
+            const {routes} = data;
+            const {bounds, legs} = routes[0];
+            const {steps} = legs[0];
+            const coords = steps.map(step => {
+              return {
+                latitude: step.start_location.lat,
+                longitude: step.start_location.lng,
+              };
+            });
+            coords.push({
+              latitude: legs[0].end_location.lat,
+              longitude: legs[0].end_location.lng,
+            });
+            setMarkers([
+              {
+                latitude: legs[0].start_location.lat,
+                longitude: legs[0].start_location.lng,
+              },
+              {
+                latitude: legs[0].end_location.lat,
+                longitude: legs[0].end_location.lng,
+              },
+            ]);
+            // Set LocationFrom and LocationTo states to objects with latitude and longitude properties
+            setLocationFrom({
+              latitude: legs[0].start_location.lat,
+              longitude: legs[0].start_location.lng,
+            });
+            setLocationTo({
+              latitude: legs[0].end_location.lat,
+              longitude: legs[0].end_location.lng,
+            });
+            // Step 2: Use the snapToRoads API to get accurate road geometry
+            const path = coords
+              .map(coord => `${coord.latitude},${coord.longitude}`)
+              .join('|');
+            await fetch(
+              `https://roads.googleapis.com/v1/snapToRoads?path=${path}&interpolate=true&key=${GOOGLE_MAPS_API_KEY}`,
+            )
+              .then(response => response.json())
+              .then(data => {
+                const snappedPoints = data.snappedPoints.map(point => ({
+                  latitude: point.location.latitude,
+                  longitude: point.location.longitude,
+                }));
+                setPolyline(snappedPoints);
+                setLocationTo('');
+                setLocationFrom('');
+              })
+              .catch(error => console.log(error));
+          }
+        })
+        .catch(error => console.log(error));
+      placesRef.current.clear();
+      placesRef2.current.clear();
+    } catch (error) {
+      alert(error);
+    }
+  };
+  const calculateDistance = () => {
+    if (LocationTo && LocationFrom) {
+      const lat1 = LocationTo.latitude;
+      const lon1 = LocationTo.longitude;
+      const lat2 = LocationFrom.latitude;
+      const lon2 = LocationFrom.longitude;
+      const R = 6371; // Earth's radius in km
+      const dLat = ((lat2 - lat1) * Math.PI) / 180;
+      const dLon = ((lon2 - lon1) * Math.PI) / 180;
+      const a =
+        Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+        Math.cos((lat1 * Math.PI) / 180) *
+          Math.cos((lat2 * Math.PI) / 180) *
+          Math.sin(dLon / 2) *
+          Math.sin(dLon / 2);
+      const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+      const distance = R * c;
+      setDistance(distance.toFixed(2));
+    }
+  };
+
+  useEffect(() => {
+    calculateDistance();
+  }, [polyline]);
+
+  return (
+    <View style={{flex: 1}}>
+      <MapView
+        style={{flex: 1}}
+        initialRegion={{
+          latitude: 27.444,
+          longitude: 68.444,
+          latitudeDelta: 8,
+          longitudeDelta: 8,
+        }}
+        region={{
+          latitude: markers.length > 0 ? markers[0].latitude : 27.8281,
+          longitude: markers.length > 0 ? markers[0].longitude : 67.9967,
+          latitudeDelta: 1,
+          longitudeDelta: 1,
+        }}>
+        {markers.map((marker, index) => (
+          <Marker
+            key={index}
+            coordinate={{
+              latitude: marker.latitude,
+              longitude: marker.longitude,
+            }}
+            title={index === 0 ? 'LocationFrom' : 'LocationTo'}
+          />
+        ))}
+        {polyline.length > 0 && (
+          <Polyline
+            coordinates={polyline}
+            strokeWidth={4}
+            strokeColor="#009688"
+          />
+        )}
+      </MapView>
+      <View style={styles.container}>
+        <GooglePlacesAutocomplete
+          ref={placesRef}
+          placeholder="LocationFrom"
+          onPress={(data, details = null) => {
+            console.log(data.description);
+            setLocationFrom(data.description);
+          }}
+          query={{
+            key: 'AIzaSyDypRVzxfjb2ga1nxskRKoFVnMEXAQX1k4',
+            language: 'en',
+            components: 'country:pk',
+          }}
+          listMode="SCROLLVIEW"
+          styles={{
+            container: {
+              backgroundColor: '#fff',
+            },
+            textInputContainer: {
+              backgroundColor: '#fff',
+              borderTopWidth: 0,
+              borderBottomWidth: 0,
+            },
+            textInput: {
+              height: 38,
+            },
+            listView: {
+              backgroundColor: '#fff',
+              position: 'absolute', // make the suggestion list absolute positioned
+              top: 0, // position it at the top
+              zIndex: 2,
+              height: 200, // set the height to cover the entire screen height
+            },
+          }}
+          fetchDetails
+          debounce={300}
+          enablePoweredByContainer={false}
+        />
+        <GooglePlacesAutocomplete
+          ref={placesRef2}
+          placeholder="LocationTo"
+          onPress={(data, details = null) => {
+            setLocationTo(data.description);
+          }}
+          query={{
+            key: 'AIzaSyDypRVzxfjb2ga1nxskRKoFVnMEXAQX1k4',
+            language: 'en',
+            components: 'country:pk',
+          }}
+          listMode="SCROLLVIEW"
+          styles={{
+            container: {
+              backgroundColor: '#fff',
+            },
+            textInputContainer: {
+              backgroundColor: '#fff',
+              borderTopWidth: 0,
+              borderBottomWidth: 0,
+            },
+            textInput: {
+              height: 38,
+            },
+            listView: {
+              backgroundColor: '#fff',
+              position: 'absolute', // make the suggestion list absolute positioned
+              zIndex: 2,
+              top: 0, // position it at the top
+              height: 200, // set the height to cover the entire screen height
+            },
+          }}
+          fetchDetails
+          debounce={300}
+          enablePoweredByContainer={false}
+        />
+
+        <View style={{flex: 0.6, backgroundColor: 'black'}}>
+          <TouchableHighlight onPress={handlePress}>
+            <Text style={{fontSize: 20, color: 'white'}}>Go</Text>
+          </TouchableHighlight>
+
+          <Text style={{fontSize: 12, color: 'white'}}>{distance}km/h</Text>
+        </View>
+      </View>
+    </View>
+  );
+};
+const styles = StyleSheet.create({
+  container: {
+    flexDirection: 'row',
+    flex: 0.1,
+  },
+  textInputContainer: {
+    width: '100%',
+    backgroundColor: '#fff',
+    borderTopWidth: 0,
+    borderBottomWidth: 0,
+  },
+  textInput: {
+    marginLeft: 0,
+    marginRight: 0,
+    height: 38,
+    color: '#5d5d5d',
+    fontSize: 16,
+    borderWidth: 1,
+    borderColor: '#ddd',
+    borderRadius: 5,
+  },
+  listView: {
+    backgroundColor: '#fff',
+    borderWidth: 1,
+    borderColor: '#ddd',
+    borderRadius: 5,
+    marginTop: 10,
+    marginLeft: 10,
+    marginRight: 10,
+    elevation: 1,
+    zIndex: 2,
+  },
+  row: {
+    padding: 13,
+    height: 44,
+    flexDirection: 'row',
+  },
+  separator: {
+    height: 1,
+    backgroundColor: '#ddd',
+  },
+  predefinedPlacesDescription: {
+    color: '#1faadb',
+  },
+});
+
+export default MapScreen;

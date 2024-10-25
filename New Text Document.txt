@@ -1,0 +1,16 @@
+mongodb+srv://ten3live:sajjadali7@cluster0.aozjroo.mongodb.net/test
+mongodb+srv://ten3live:sajjadali7@cluster0.aozjroo.mongodb.net/?retryWrites=true&w=majority
+
+const { MongoClient, ServerApiVersion } = require('mongodb');
+const uri = "mongodb+srv://ten3live:sajjadali7@sajjadsolangi.eduls.mongodb.net/?retryWrites=true&w=majority";
+const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
+client.connect(err => {
+  const collection = client.db("test").collection("devices");
+  // perform actions on the collection object
+  client.close();
+});
+
+public
+frkerdkb
+private
+b126d32f-18ba-4f36-ac5d-5ce69eb2316d

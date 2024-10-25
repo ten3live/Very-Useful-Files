@@ -1,0 +1,40 @@
+//React 
+npm install create-react-app -g 
+npx create-react-app my-app
+
+//Expo
+
+npx create-react-native-app my-app
+npm i eas-cli -g 
+npm i create-expo-app -g 
+npx create-expo-app my-app
+npx create-expo-app --template
+
+react native
+npx react-native init AwesomeProject
+
+
+Nodemon
+npm i -g nodemon
+
+yarn
+npm i -g yarn
+
+
+Laravel
+composer global require laravel/installer
+composer create-project laravel/laravel example-app
+laravel new example-app
+php artisan serve
+
+
+Codeigniter
+composer create-project codeigniter4/appstarter project-root
+composer require codeigniter4/framework
+php spark serve
+
+
+
+
+
+   

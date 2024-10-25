@@ -1,0 +1,29 @@
+git init
+git add README.md
+git commit -m "first commit"
+git branch -M main
+git remote add origin https://github.com/ten3live/starter-express-api.git
+git push -u origin main
+
+…or push an existing repository from the command line
+git remote add origin https://github.com/ten3live/starter-express-api.git
+git branch -M main
+git push -u origin main
+
+
+git config --global user.email "ten3live@gmail.com"
+git config --global user.name "Sajjad Ali"
+
+git pull origin git@github.com:ten3live/starter-express-api.git
+https://github.com/ten3live/starter-express-api.git
+
+
+
+$ cd ~/.ssh
+$ ls
+authorized_keys2  id_dsa       known_hosts
+config            id_dsa.pub
+
+$ ssh-keygen -o
+
+

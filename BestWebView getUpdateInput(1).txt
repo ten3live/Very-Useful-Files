@@ -1,0 +1,91 @@
+import React, {useState, useEffect, useRef} from 'react';
+import {View, Text, TextInput} from 'react-native';
+import {WebView} from 'react-native-webview';
+
+const Admin = () => {
+  const [email, setEmail] = useState('sajjadali@gmail.com');
+  const [password, setPassword] = useState('solangi');
+  const [Loading, setLoading] = useState(false);
+  const [progress, setProgress] = useState(0.0);
+
+  const webViewRef = useRef();
+  useEffect(() => {
+    console.log(progress);
+    const setInitialValues = `
+      (function() {
+        const emailInput = document.getElementById('email');
+        const passwordInput = document.getElementById('password');
+
+        emailInput.value = '${email}';
+        passwordInput.value = '${password}';
+
+        function sendMessage() {
+          const message = {
+            email: emailInput.value,
+            password: passwordInput.value,
+          };
+          window.ReactNativeWebView.postMessage(JSON.stringify(message));
+        }
+
+        emailInput.addEventListener('input', sendMessage);
+        passwordInput.addEventListener('input', sendMessage);
+      })();
+    `;
+    webViewRef.current.injectJavaScript(setInitialValues);
+  }, [progress]);
+
+  const handleWebViewMessage = event => {
+    const message = JSON.parse(event.nativeEvent.data);
+    setEmail(message.email || '');
+    setPassword(message.password || '');
+  };
+
+  const handleEmailInputChange = text => {
+    setEmail(text);
+    const setInputValue = `
+      (function() {
+        const emailInput = document.getElementById('email');
+        emailInput.value = '${text}';
+      })();
+    `;
+    webViewRef.current.injectJavaScript(setInputValue);
+  };
+
+  const handlePasswordInputChange = text => {
+    setPassword(text);
+    const setInputValue = `
+      (function() {
+        const passwordInput = document.getElementById('password');
+        passwordInput.value = '${text}';
+      })();
+    `;
+    webViewRef.current.injectJavaScript(setInputValue);
+  };
+
+  return (
+    <View style={{flex: 1}}>
+      <WebView
+        ref={webViewRef}
+        source={{uri: 'http://sajjadali.epizy.com'}}
+        onMessage={handleWebViewMessage}
+        onLoadProgress={event => {
+          setProgress(event.nativeEvent.progress);
+        }}
+      />
+      <TextInput
+        value={email}
+        placeholder="Email"
+        onChangeText={handleEmailInputChange}
+      />
+      <TextInput
+        value={password}
+        placeholder="Password"
+        onChangeText={handlePasswordInputChange}
+      />
+      <Text>Email: {email}</Text>
+      <Text>Password: {password}</Text>
+    </View>
+  );
+};
+
+export default Admin;

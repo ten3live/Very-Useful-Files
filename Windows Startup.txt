@@ -1,0 +1,37 @@
+To make an app start automatically on Windows startup, you can follow these steps:
+
+Press the Windows key + R on your keyboard to open the Run dialog box.
+
+Type "shell:startup" (without quotes) and press Enter. This will open the Startup folder.
+
+Right-click on an empty area in the Startup folder and select "New" and then "Shortcut."
+
+In the "Create Shortcut" window, browse to the location of the executable file of the app you want to run at startup. For example, if you want to run Android Studio emulator, browse to the location where you have installed Android Studio and select the "emulator.exe" file.
+
+Click "Next" and give the shortcut a name, such as "Android Studio Emulator."
+
+Click "Finish" to create the shortcut.
+
+Now, every time you start your PC, the app (in this case, Android Studio emulator) will start automatically.
+
+Note: Some apps have the option to start automatically on Windows startup in their settings. You can also check the settings of the app you want to run at startup to see if this option is available.
+
+As an example, let's assume you want to start the Android Studio emulator automatically when you start your PC. Here are the steps to follow:
+
+Open the Android Studio IDE and click on the "AVD Manager" button in the toolbar.
+
+Select the emulator you want to start automatically and click on the "Edit" button.
+
+In the "Virtual Device Configuration" window, click on the "Show Advanced Settings" button.
+
+Under the "Emulated Performance" section, check the "Launch in a tool window" option.
+
+Click "Finish" to save the changes.
+
+Now, follow the steps mentioned earlier to create a shortcut for the emulator.exe file in the Startup folder.
+
+Give the shortcut a name, such as "Android Studio Emulator" and click "Finish."
+
+Restart your PC to see if the Android Studio emulator starts automatically on Windows startup.
+
+Note: The above steps may vary slightly depending on the version of Android Studio you are using.

@@ -1,0 +1,20 @@
+import React, { useRef } from 'react';
+import { View } from 'react-native';
+import Video from 'react-native-video';
+
+const MyVideo = () => {
+  const videoRef = useRef(null);
+
+  return (
+    <View>
+      <Video
+        ref={videoRef}
+        source={require('./path/to/your/video.mp4')}
+        style={{ width: '100%', height: 300 }}
+        controls={true}
+      />
+    </View>
+  );
+};
+
+export default MyVideo;

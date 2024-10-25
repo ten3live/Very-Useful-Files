@@ -1,0 +1,219 @@
+import React, { useState } from 'react';
+import { View, TextInput, Button, Text, ActivityIndicator,TouchableOpacity } from 'react-native';
+import axios from 'axios';
+const ForgotPassword = ({route,navigation}) => {
+  const [email, setEmail] = useState('');
+  const [resetToken, setResetToken] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const [message, setMessage] = useState('');
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [error, setError] = useState(null);
+  const [success, setSuccess] = useState(false);
+
+  const handleResetPasswordafter = async () => {
+    if (password !== confirmPassword) {
+      setError('Passwords do not match');
+      return;
+    }
+    try {
+      await axios.post(`http://10.0.2.2:3000/api/auth/reset-password/${resetToken}`, { password });
+      setSuccess(true);
+    } catch (error) {
+      setError(error.response.data.message);
+    }
+  };
+
+  const handleResetPassword = async () => {
+    setIsLoading(true);
+    const response = await fetch('http://10.0.2.2:3000/api/auth/reset-password', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ email })
+    });
+    const data = await response.json();
+    setIsLoading(false);
+    setMessage(data.message);
+  };
+
+  return (
+    <View>
+      <TextInput placeholder="Enter your email" onChangeText={setEmail} value={email} />
+      <Button title="Reset Password" onPress={handleResetPassword} />
+      {isLoading && <ActivityIndicator />}
+      {message && <Text>{message}</Text>}
+      <Text>Reset Token Available ?</Text>
+      <View>
+   
+      <TextInput secureTextEntry value={resetToken} placeholder={'Enter Token'} onChangeText={setResetToken} />
+      
+      <TextInput secureTextEntry value={password} placeholder={'New Password'} onChangeText={setPassword} />
+   
+      <TextInput secureTextEntry value={confirmPassword} placeholder={'Confirm New Password'} onChangeText={setConfirmPassword} />
+   
+      {error && <Text style={{ color: 'red' }}>{error}</Text>}
+      {success ? (
+        <Text style={{ color: 'green' }}>Password reset successfully!</Text>
+      ) : (
+        <Button title="Set New Password" onPress={handleResetPasswordafter} />
+       
+      )}
+      <TouchableOpacity onPress={() => navigation.navigate('Login')}>
+        <Text>Back to Login</Text>
+      </TouchableOpacity>
+    </View>
+    
+    
+    
+    </View>
+  );
+};
+
+export default ForgotPassword;
+
+
+
+//NodeJS
+
+const Joi = require("joi");
+const bcrypt = require('bcrypt');
+const { validationResult } = require('express-validator');
+const { User } = require("../models/user");
+const mongoose = require("mongoose");
+const express = require("express");
+const nodemailer = require('nodemailer');
+const smtpTransport = require('nodemailer-smtp-transport');
+const router = express.Router();
+
+
+
+router.post('/reset-password', async (req, res) => {
+  const { email } = req.body;
+  const user = await User.findOne({ email });
+
+  if (!user) {
+    return res.status(404).json({ message: 'User not found' });
+  }
+
+  const resetToken = (Math.floor(Math.random() * 99) + 10).toString()
+  user.resetToken = resetToken;
+  await user.save();
+
+  const transporter = nodemailer.createTransport(
+    smtpTransport({
+      host: 'sg2plzcpnl489587.prod.sin2.secureserver.net', // GoDaddy's SMTP server hostname
+        auth: {
+        user: 'ten3live@hunzaexports.com',
+        pass: 'sajjadali7'
+      },
+    })
+
+  );
+
+  const mailOptions = {
+    from: 'ten3live@hunzaexports.com',
+    to: email,
+    subject: 'Password Reset',
+    html: `
+      <p>Please click the following link to reset your password:</p>
+      <p>${resetToken}</p>
+     
+
+    `
+  };
+
+  transporter.sendMail(mailOptions, (error, info) => {
+    if (error) {
+      console.error(error);
+      return res.status(500).json({ message: 'Failed to send email' });
+    } else {
+      console.log('Email sent: ' + info.response);
+      return res.json({ message: 'Email sent' });
+    }
+  });
+});
+
+
+
+
+router.post('/reset-password/:resetToken', async (req, res) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ message: errors.array()[0].msg });
+  }
+  try {
+    const { resetToken } = req.params;
+    const { password } = req.body;
+    const user = await User.findOne({ resetToken: resetToken });
+    if (!user) {
+      return res.status(400).json({ message: 'Invalid or expired reset token' });
+    }
+    const hashedPassword = await bcrypt.hash(password, 10);
+    user.password = hashedPassword;
+       await user.save();
+    res.json({ message: 'Password reset successfully!' });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
+
+
+//Schema
+
+const userSchema = new mongoose.Schema({
+  name: {
+    type: String,
+    required: true,
+    minlength: 5,
+    maxlength: 100,
+  },
+  email: {
+    type: String,
+    required: true,
+    minlength: 5,
+    maxlength: 1005,
+    unique: true,
+  },
+  password: {
+    type: String,
+    required: true,
+    minlength: 5,
+    maxlength: 10024,
+  },
+  image: {
+    type: String,
+  },
+  resetToken: {
+    type: String,
+  },
+  mobile: {
+    type: String,
+    required: true,
+    minlength: 5,
+    maxlength: 100,
+  },
+  address: {
+    type: String,
+    required: true,
+    minlength: 5,
+    maxlength: 1000,
+  },
+  isActive: {
+    type: Boolean,
+    default: false,
+  },
+  isAdmin: {
+    type: Boolean,
+    default: false,
+  },
+});
+
+
+
+
+
+

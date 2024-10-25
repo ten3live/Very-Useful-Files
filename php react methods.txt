@@ -1,0 +1,134 @@
+Method 1
+// login.php
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+  // Retrieve the email and password from the request body
+  $email = $_POST['email'];
+  $password = $_POST['password'];
+
+  // Validate the email and password (e.g. check if they match a record in a database)
+  if ($email === 'user@example.com' && $password === 'password123') {
+    // If the email and password are valid, return a success response
+    echo json_encode(['success' => true]);
+  } else {
+    // If the email and password are invalid, return an error response
+    echo json_encode(['success' => false, 'error' => 'Invalid email or password']);
+  }
+}
+
+
+import React, { useState } from 'react';
+import { View, TextInput, Button, Alert } from 'react-native';
+
+const LoginScreen = () => {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+
+  const handleLogin = () => {
+    // Send a POST request to the login.php script
+    fetch('http://example.com/login.php', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+      body: `email=${email}&password=${password}`,
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        // Handle the response from the server
+        if (data.success) {
+          Alert.alert('Login successful');
+        } else {
+          Alert.alert('Error', data.error);
+        }
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  };
+
+  return (
+    <View>
+      <TextInput
+        placeholder="Email"
+        value={email}
+        onChangeText={(text) => setEmail(text)}
+      />
+      <TextInput
+        placeholder="Password"
+        value={password}
+        onChangeText={(text) => setPassword(text)}
+        secureTextEntry
+      />
+      <Button title="Login" onPress={handleLogin} />
+    </View>
+  );
+};
+
+export default LoginScreen;
+
+
+
+Method 2 
+
+// login.php
+
+<?php
+include_once("config.php");
+header('Content-Type: application/json');
+
+// Get the raw request body as a JSON string
+$request_body = file_get_contents('php://input');
+
+// Decode the JSON string into an object
+$data = json_decode($request_body);
+
+$name = $data->name;
+$email = $data->email;
+$password = $data->password;
+$image = $data->image;
+$mobile = $data->mobile;
+$address = $data->address;
+
+// Your database insert code goes here
+// ...
+
+// Return a success response
+echo json_encode(['success' => true]);
+?>
+
+
+
+
+
+const handleSubmit = async values => {
+  console.log(values);
+  try {
+    const response = await fetch(
+      'http://192.168.125.254/rest/users/createuser.php',
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          name: values.name,
+          image:
+            imaged !== null
+              ? imaged
+              : 'https://www.w3schools.com/howto/img_avatar.png',
+          email: values.email,
+          mobile: values.mobile,
+          address: values.address,
+          password: values.password,
+        }),
+      },
+    );
+
+    const responseData = await response.json();
+
+    console.log(responseData);
+  } catch (error) {
+    console.error(error);
+  }
+};

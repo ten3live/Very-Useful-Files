@@ -1,0 +1,30 @@
+{
+  
+  "expo": {
+   
+    "name": "Real Estate",
+    "slug": "realsau",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "androidNavigationBar": {
+      "visible":"sticky",    //sticky-immersive to hide
+      "backgroundColor": "black",
+      "barStyle": "light-content"},
+     
+     "android": {
+        "package": "com.sau.realEstate",
+        "versionCode": 1
+      },
+    
+      "icon": "./assets/icon.png",
+      "splash": {
+        "image": "./assets/splash.png",
+        "resizeMode": "contain",
+        "backgroundColor": "#ffffff"
+    }
+     
+    
+     
+  }
+    
+}

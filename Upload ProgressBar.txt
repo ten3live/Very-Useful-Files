@@ -1,0 +1,30 @@
+      const xhr = new XMLHttpRequest();
+      const formData = createFormData(photo, values);
+      xhr.open('POST', 'http://10.0.2.2:3000/api/products');
+      xhr.upload.addEventListener('progress', (event) => {
+        const progress = event.loaded / event.total;
+        setProgress(progress);
+        console.log(`Upload Progress: ${progress}`);
+      });
+      xhr.addEventListener('readystatechange', () => {
+        if (xhr.readyState !== 4) {
+          return;
+        }
+        if (xhr.status === 400) {
+          Alert.alert(
+            'Failed to AddProduct',
+            'Product already exist or Something is Missing ',
+            [{text: 'OK', onPress: () => console.log(xhr.response)}],
+          );
+        } else if (xhr.status === 200) {
+          const response = JSON.parse(xhr.response);
+          Alert.alert('Account Created', 'Successfully AddProducted ', [
+            {
+              text: 'HomeScreen',
+              onPress: () => navigation.navigate('HomeScreen'),
+            },
+          ]);
+        }
+      });
+      xhr.send(formData);
+   

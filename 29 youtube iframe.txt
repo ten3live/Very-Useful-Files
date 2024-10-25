@@ -1,0 +1,30 @@
+import React, { useRef } from 'react';
+import { View } from 'react-native';
+import YoutubePlayer from 'react-native-youtube-iframe';
+
+const YoutubeExample = () => {
+  const playerRef = useRef(null);
+
+  return (
+    <View style={{ flex: 1 }}>
+      <YoutubePlayer
+        ref={playerRef}
+        height={300}
+        play={false}
+        videoId={'tCXGJQYZ9JA'}
+        onChangeState={(event) => console.log(event)}
+        onReady={() => console.log('ready')}
+        onError={(e) => console.log(e)}
+        onPlaybackQualityChange={(q) => console.log(q)}
+        volume={50}
+        playbackRate={1}
+        playerParams={{
+          cc_lang_pref: 'us',
+          showClosedCaptions: true,
+        }}
+      />
+    </View>
+  );
+};
+
+export default YoutubeExample;

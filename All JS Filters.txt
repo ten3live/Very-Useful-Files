@@ -1,0 +1,48 @@
+const oldArray = [1, 2, 3];
+const newItem = 4;
+const newArray = [...oldArray, newItem]; // [1, 2, 3, 4]
+
+const oldArray = [1, 2, 3];
+const newItem = 4;
+oldArray.push(newItem); // [1, 2, 3, 4]
+
+const oldArray = [1, 2, 3];
+const removedItem = oldArray.pop(); // [1, 2]
+
+const oldArray = [1, 2, 3];
+const removedItem = oldArray.shift(); // [2, 3]
+
+const oldArray = [1, 2, 3];
+const newItem = 0;
+oldArray.unshift(newItem); // [0, 1, 2, 3]
+
+const oldArray = [1, 2, 3, 4, 5];
+const newArray = oldArray.slice(1, 4); // [2, 3, 4]
+
+const oldArray = [1, 2, 3];
+const removedItems = oldArray.splice(1, 1, 4); // [2]
+console.log(oldArray); // [1, 4, 3]
+
+
+
+const oldArray = [1, 2, 3];
+const newArray = oldArray.map(item => item * 2); // [2, 4, 6]
+
+const oldArray = [1, 2, 3];
+const newArray = oldArray.filter(item => item > 1); // [2, 3]
+
+const oldArray = [1, 2, 3];
+const updatedItem = 2;
+const updatedArray = oldArray.map(item => item === updatedItem ? 4 : item); // [1, 4, 3]
+
+const oldArray = [1, 2, 3];
+const updatedItem = 2;
+oldArray.splice(oldArray.indexOf(updatedItem), 1, 4); // [1, 4, 3]
+
+const oldArray = [1, 2, 3];
+const deletedItem = 2;
+const newArray = oldArray.filter(item => item !== deletedItem); // [1, 3]
+
+const oldArray = [1, 2, 3];
+const deletedItem = 2;
+oldArray.splice(oldArray.indexOf(deletedItem), 1); // [1, 3]

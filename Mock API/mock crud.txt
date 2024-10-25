@@ -1,0 +1,64 @@
+npm install axios axios-mock-adapter
+
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
+import MockAdapter from 'axios-mock-adapter';
+const mock = new MockAdapter(axios);
+
+// Mock GET request to fetch users
+mock.onGet('/users').reply(200, [
+  { id: 1, name: 'John Doe' },
+  { id: 2, name: 'Jane Smith' },
+]);
+
+// Mock POST request to create a new user
+mock.onPost('/users').reply(201, { id: 3, name: 'Bob Johnson' });
+
+// Mock PUT request to update an existing user
+mock.onPut('/users/1').reply(200, { id: 1, name: 'John Smith' });
+
+// Mock DELETE request to delete a user
+mock.onDelete('/users/2').reply(204);
+
+function App() {
+  const [users, setUsers] = useState([]);
+
+  useEffect(() => {
+    axios.get('/users').then((response) => {
+      setUsers(response.data);
+    });
+  }, []);
+
+  const handleCreateUser = () => {
+    axios.post('/users', { name: 'Bob Johnson' }).then((response) => {
+      setUsers((prevUsers) => [...prevUsers, response.data]);
+    });
+  };
+
+  const handleUpdateUser = () => {
+    axios.put('/users/1', { name: 'John Smith' }).then((response) => {
+      setUsers((prevUsers) =>
+        prevUsers.map((user) => (user.id === response.data.id ? response.data : user))
+      );
+    });
+  };
+
+  const handleDeleteUser = () => {
+    axios.delete('/users/2').then(() => {
+      setUsers((prevUsers) => prevUsers.filter((user) => user.id !== 2));
+    });
+  };
+
+  return (
+    <div>
+      <ul>
+        {users.map((user) => (
+          <li key={user.id}>{user.name}</li>
+        ))}
+      </ul>
+      <button onClick={handleCreateUser}>Create User</button>
+      <button onClick={handleUpdateUser}>Update User</button>
+      <button onClick={handleDeleteUser}>Delete User</button>
+    </div>
+  );
+}

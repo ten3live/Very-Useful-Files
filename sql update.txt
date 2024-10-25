@@ -1,0 +1,5 @@
+copy users password to matchmakers password field
+
+UPDATE matchmakers
+INNER JOIN users ON matchmakers.email = users.email
+SET matchmakers.password = users.password;

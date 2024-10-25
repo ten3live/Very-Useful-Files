@@ -1,0 +1,26 @@
+//match word
+let str = "hello world";
+let pattern = /world/;
+console.log(pattern.test(str)); // Output: true
+
+//match multiple words
+let str = "The quick brown fox jumps over the lazy dog";
+let pattern = /quick|fox|lazy/;
+console.log(pattern.test(str)); // Output: true
+
+//range of characters
+let str = "The quick brown fox jumps over the lazy dog";
+let pattern = /[a-z]/;
+console.log(pattern.test(str)); // Output: true
+
+//matches characters
+let str = "The quick brown fox jumps over the lazy dog";
+let pattern = /\b\w{5}\b/;
+console.log(pattern.test(str)); // Output: true (matches "quick" and "brown")
+
+//email matching
+let str = "john.doe@example.com";
+let pattern = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+console.log(pattern.test(str)); // Output: true
+
+

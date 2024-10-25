@@ -1,0 +1,25 @@
+To run a React Native app on a physical Android device without Expo or building an APK, you will need to follow the following steps:
+
+Connect your Android device to your computer using a USB cable. Make sure that your device is in developer mode by going to the settings app on your device, scrolling to the "About phone" section, and tapping on the "Build number" option 7 times. This will enable developer options on your device.
+
+Enable USB debugging on your Android device by going to the developer options in the settings app and turning on the "USB debugging" option.
+
+Open a command prompt or terminal on your computer and navigate to the root directory of your React Native project.
+
+Run the following command to start the Metro server:
+
+java
+Copy code
+npx react-native start
+Open a new command prompt or terminal and navigate to the root directory of your React Native project.
+
+Run the following command to install the app on your device:
+
+java
+Copy code
+npx react-native run-android
+This command will build and install the app on your device. Make sure that your device is selected as the deployment target.
+
+Once the app is installed, you can open it on your device and start testing.
+
+Keep in mind that this method requires a working development environment on your computer, which includes the Android SDK and the necessary drivers for your device. If you encounter any issues, make sure to check that your development environment is set up correctly and that your device is properly connected and recognized by your computer.

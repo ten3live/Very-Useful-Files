@@ -1,0 +1,75 @@
+import React from 'react';
+import { render, waitForElement } from '@testing-library/react';
+import axios from 'axios';
+import MyComponent from './MyComponent';
+
+jest.mock('axios');
+
+// Test the MyComponent component
+describe('MyComponent', () => {
+  it('should render a list of items', async () => {
+    const mockData = [{ id: 1, name: 'Item 1' }, { id: 2, name: 'Item 2' }];
+    axios.get.mockResolvedValue({ data: mockData });
+
+    const { getByText } = render(<MyComponent />);
+
+    const item1 = await waitForElement(() => getByText('Item 1'));
+    const item2 = await waitForElement(() => getByText('Item 2'));
+
+    expect(item1).toBeInTheDocument();
+    expect(item2).toBeInTheDocument();
+  });
+});
+
+
+
+#AXIOS MOCK ADAPTER
+axios mock adapter example in app.js
+
+import axios from 'axios';
+import MockAdapter from 'axios-mock-adapter';
+
+const mock = new MockAdapter(axios);
+
+// Mock a successful response for a GET request to '/api/data'
+mock.onGet('/api/data').reply(200, { data: 'mock data' });
+
+// Make the request and handle the response
+axios.get('/api/data')
+  .then(response => {
+    console.log(response.data); // should output { data: 'mock data' }
+  })
+  .catch(error => {
+    console.error(error);
+  });
+
+
+
+#MOXIOS
+npm install --save-dev moxios
+import axios from 'axios';
+import moxios from 'moxios';
+
+// Set up Moxios before any tests run
+beforeEach(function () {
+  moxios.install();
+});
+
+// Tear down Moxios after all tests are done
+afterEach(function () {
+  moxios.uninstall();
+});
+
+// Use Moxios to mock a response to an Axios request
+it('should return a successful response', function (done) {
+  moxios.stubRequest('/api/data', {
+    status: 200,
+    response: { data: 'mock data' },
+  });
+
+  axios.get('/api/data').then(function (response) {
+    expect(response.status).toEqual(200);
+    expect(response.data).toEqual({ data: 'mock data' });
+    done();
+  });
+});

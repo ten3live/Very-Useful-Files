@@ -1,0 +1,9 @@
+
+smtp-relay.sendinblue.com
+
+
+587
+
+ten3live@gmail.com
+
+a3bm5VWC8sMALUpt

@@ -1,0 +1,120 @@
+expo
+import axios from 'axios';
+import * as ImagePicker from 'expo-image-picker';
+import { Cloudinary } from 'cloudinary-core';
+const cloudinary = new Cloudinary({ 
+  cloud_name: "ten3live",
+  api_key: "866881953395489",
+  api_secret: "DHG_S6I8Ann_QDK89pYbO6ah-TQ"
+});
+//const cloudinary = new Cloudinary({ cloud_name: 'your-cloud-name' });
+
+const handleUpload = async () => {
+  const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+  if (status !== 'granted') {
+    console.log('Permission not granted!');
+    return;
+  }
+
+  const result = await ImagePicker.launchImageLibraryAsync({});
+
+  if (!result.cancelled) {
+    const file = {
+      uri: result.uri,
+      type: 'image/jpeg',
+      name: 'file.jpg',
+    };
+    
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('upload_preset', 'your-upload-preset');
+
+    axios.post(cloudinary.url('image/upload'), formData)
+      .then((res) => {
+        console.log(res.data.secure_url);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }
+};
+
+
+react native
+import axios from 'axios';
+import ImagePicker from 'react-native-image-picker';
+import { Cloudinary } from 'cloudinary-core';
+
+const cloudinary = new Cloudinary({ cloud_name: 'your-cloud-name' });
+
+const handleUpload = () => {
+  ImagePicker.showImagePicker({}, (response) => {
+    if (response.didCancel) {
+      console.log('User cancelled image picker');
+    } else if (response.error) {
+      console.log('ImagePicker Error: ', response.error);
+    } else if (response.customButton) {
+      console.log('User tapped custom button: ', response.customButton);
+    } else {
+      const file = {
+        uri: response.uri,
+        type: response.type,
+        name: response.fileName,
+      };
+      
+      const formData = new FormData();
+      formData.append('file', file);
+      formData.append('upload_preset', 'your-upload-preset');
+
+      axios.post(cloudinary.url('image/upload'), formData)
+        .then((res) => {
+          console.log(res.data.secure_url);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    }
+  });
+};
+
+
+
+
+NodeJS
+npm install cloudinary
+
+const cloudinary = require('cloudinary').v2;
+
+
+// Configuration 
+cloudinary.config({
+  cloud_name: "ten3live",
+  api_key: "866881953395489",
+  api_secret: "DHG_S6I8Ann_QDK89pYbO6ah-TQ"
+});
+
+
+// Upload
+
+const res = cloudinary.uploader.upload('https://upload.wikimedia.org/wikipedia/commons/a/ae/Olympic_flag.jpg', {public_id: "olympic_flag"})
+
+res.then((data) => {
+  console.log(data);
+  console.log(data.secure_url);
+}).catch((err) => {
+  console.log(err);
+});
+
+
+// Generate 
+const url = cloudinary.url("olympic_flag", {
+  width: 100,
+  height: 150,
+  Crop: 'fill'
+});
+
+
+
+// The output url
+console.log(url);
+// https://res.cloudinary.com/<cloud_name>/image/upload/h_150,w_100/olympic_flag

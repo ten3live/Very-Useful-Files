@@ -1,0 +1,270 @@
+npx create-react-app my-app
+cd my-app
+npm install --save redux react-redux redux-thunk axios
+
+
+
+ReactDOM.render(<Provider store={store}><App /></Provider>, document.getElementById('root'));
+
+
+
+#index.js
+import React from 'react';
+import ReactDOM from 'react-dom';
+import { Provider } from 'react-redux';
+import { createStore, applyMiddleware } from 'redux';
+import thunk from 'redux-thunk';
+import App from './App';
+import rootReducer from './reducers';
+
+const store = createStore(rootReducer, applyMiddleware(thunk));
+
+ReactDOM.render(
+  <Provider store={store}>
+    <App />
+  </Provider>,
+  document.getElementById('root')
+);
+
+
+
+#App.js
+import React, { useEffect } from 'react';
+import { connect } from 'react-redux';
+import { fetchBooks, addBook, updateBook, deleteBook } from '../actions';
+
+function App({ books, loading, error, fetchBooks, addBook, updateBook, deleteBook }) {
+  useEffect(() => {
+    fetchBooks();
+  }, []);
+
+  const handleAddBook = () => {
+    const newBook = { title: 'New Book', author: 'New Author' };
+    addBook(newBook);
+  };
+
+  const handleUpdateBook = book => {
+    const updatedBook = { ...book, title: 'Updated Book' };
+    updateBook(updatedBook);
+  };
+
+  const handleDeleteBook = id => {
+    deleteBook(id);
+  };
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
+  if (error) {
+    return <div>{error}</div>;
+  }
+
+  return (
+    <div>
+      <button onClick={handleAddBook}>Add Book</button>
+      <ul>
+        {books.map(book => (
+          <li key={book.id}>
+            {book.title} by {book.author}
+            <button onClick={() => handleUpdateBook(book)}>Update</button>
+            <button onClick={() => handleDeleteBook(book.id)}>Delete</button>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
+const mapStateToProps = state => ({
+  books: state.books.books,
+  loading: state.books.loading,
+  error: state.books.error
+});
+
+export default connect(mapStateToProps, { fetchBooks, addBook, updateBook, deleteBook })(App);
+
+
+
+### actions/index.js
+import axios from 'axios';
+
+export const FETCH_BOOKS_REQUEST = 'FETCH_BOOKS_REQUEST';
+export const FETCH_BOOKS_SUCCESS = 'FETCH_BOOKS_SUCCESS';
+export const FETCH_BOOKS_FAILURE = 'FETCH_BOOKS_FAILURE';
+export const ADD_BOOK_REQUEST = 'ADD_BOOK_REQUEST';
+export const ADD_BOOK_SUCCESS = 'ADD_BOOK_SUCCESS';
+export const ADD_BOOK_FAILURE = 'ADD_BOOK_FAILURE';
+export const UPDATE_BOOK_REQUEST = 'UPDATE_BOOK_REQUEST';
+export const UPDATE_BOOK_SUCCESS = 'UPDATE_BOOK_SUCCESS';
+export const UPDATE_BOOK_FAILURE = 'UPDATE_BOOK_FAILURE';
+export const DELETE_BOOK_REQUEST = 'DELETE_BOOK_REQUEST';
+export const DELETE_BOOK_SUCCESS = 'DELETE_BOOK_SUCCESS';
+export const DELETE_BOOK_FAILURE = 'DELETE_BOOK_FAILURE';
+
+export function fetchBooks() {
+  return dispatch => {
+    dispatch({ type: FETCH_BOOKS_REQUEST });
+    axios
+      .get('http://localhost:3000/books')
+      .then(response => {
+        dispatch({
+          type: FETCH_BOOKS_SUCCESS,
+          payload: response.data
+        });
+      })
+      .catch(error => {
+        dispatch({
+          type: FETCH_BOOKS_FAILURE,
+          payload: error.message
+        });
+      });
+  };
+}
+
+export function addBook(book) {
+  return dispatch => {
+    dispatch({ type: ADD_BOOK_REQUEST });
+    axios
+      .post('http://localhost:3000/books', book)
+      .then(response => {
+        dispatch({
+          type: ADD_BOOK_SUCCESS,
+          payload: response.data
+        });
+      })
+      .catch(error => {
+        dispatch({
+          type: ADD_BOOK_FAILURE,
+          payload: error.message
+        });
+      });
+  };
+}
+
+export function updateBook(book) {
+  return dispatch => {
+    dispatch({ type: UPDATE_BOOK_REQUEST });
+    axios
+      .put(`http://localhost:3000/books/${book.id}`, book)
+      .then(response => {
+        dispatch({
+          type: UPDATE_BOOK_SUCCESS,
+          payload: response.data
+        });
+      })
+      .catch(error => {
+        dispatch({
+          type: UPDATE_BOOK_FAILURE,
+          payload: error.message
+        });
+      });
+  };
+}
+
+export function deleteBook(id) {
+  return dispatch => {
+    dispatch({ type: DELETE_BOOK_REQUEST });
+    axios
+      .delete(`http://localhost:3000/books/${id}`)
+      .then(response => {
+        dispatch({
+          type: DELETE_BOOK_SUCCESS,
+          payload: response.data
+        });
+      })
+      .catch(error => {
+        dispatch({
+          type: DELETE_BOOK_FAILURE,
+          payload: error.message
+        });
+      });
+  };
+}
+
+
+
+#### reducers/index.js
+
+import { combineReducers } from 'redux';
+import {
+  FETCH_BOOKS_REQUEST,
+  FETCH_BOOKS_SUCCESS,
+  FETCH_BOOKS_FAILURE,
+  ADD_BOOK_REQUEST,
+  ADD_BOOK_SUCCESS,
+  ADD_BOOK_FAILURE,
+  UPDATE_BOOK_REQUEST,
+  UPDATE_BOOK_SUCCESS,
+  UPDATE_BOOK_FAILURE,
+  DELETE_BOOK_REQUEST,
+  DELETE_BOOK_SUCCESS,
+  DELETE_BOOK_FAILURE
+} from '../actions';
+
+const initialState = {
+  books: [],
+  loading: false,
+  error: null
+};
+
+function booksReducer(state = initialState, action) {
+  switch (action.type) {
+    case FETCH_BOOKS_REQUEST:
+    case ADD_BOOK_REQUEST:
+    case UPDATE_BOOK_REQUEST:
+    case DELETE_BOOK_REQUEST:
+      return {
+        ...state,
+        loading: true,
+        error: null
+      };
+    case FETCH_BOOKS_SUCCESS:
+      return {
+        ...state,
+        books: action.payload,
+        loading: false
+      };
+    case ADD_BOOK_SUCCESS:
+      return {
+        ...state,
+        books: [...state.books, action.payload],
+        loading: false
+      };
+    case UPDATE_BOOK_SUCCESS:
+      return {
+        ...state,
+        books: state.books.map
+        book => book.id === action.payload.id ? action.payload : book
+      ),
+      loading: false
+    };
+    case DELETE_BOOK_SUCCESS:
+      return {
+        ...state,
+        books: state.books.filter(book => book.id !== action.payload.id),
+        loading: false
+      };
+    case FETCH_BOOKS_FAILURE:
+    case ADD_BOOK_FAILURE:
+    case UPDATE_BOOK_FAILURE:
+    case DELETE_BOOK_FAILURE:
+      return {
+        ...state,
+        loading: false,
+        error: action.payload
+      };
+    default:
+      return state;
+  }
+}
+
+const rootReducer = combineReducers({
+  books: booksReducer
+});
+
+export default rootReducer;
+
+
+
+

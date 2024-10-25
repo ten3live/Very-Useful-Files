@@ -1,0 +1,35 @@
+import React, { useState, useEffect } from 'react';
+
+function Timer() {
+  const [seconds, setSeconds] = useState(0);
+  const [intervalId, setIntervalId] = useState(null);
+
+ 
+  const startTimer = () => {
+    const id = setInterval(() => {
+      setSeconds((seconds) => seconds + 1);
+    }, 1000);
+    setIntervalId(id);
+  };
+
+  const stopTimer = () => {
+    clearInterval(intervalId);
+    setIntervalId(null);
+  };
+
+  const resetTimer = () => {
+    setSeconds(0);
+    stopTimer();
+  };
+
+  return (
+    <div>
+      <div>{seconds}</div>
+      <button onClick={startTimer}>Start</button>
+      <button onClick={stopTimer}>Stop</button>
+      <button onClick={resetTimer}>Reset</button>
+    </div>
+  );
+}
+
+export default Timer;

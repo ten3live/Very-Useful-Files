@@ -1,0 +1,5 @@
+Client ID
+	jF6Q3B2xkolfdf1V6AwJdxg-K45VKPnGxnWNvnjnovY
+
+Client Secret
+	S8AfqjcwlDx1AKFPPqkkbO_1BlKR9-60heFNiDybwIU

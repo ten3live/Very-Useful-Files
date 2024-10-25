@@ -1,0 +1,115 @@
+//mongodb
+import { Stitch, AnonymousCredential } from 'mongodb-stitch-react-native-sdk';
+
+const client = Stitch.initializeDefaultAppClient('your-app-id');
+const db = client.getServiceClient(RemoteMongoClient.factory, 'your-service-name').db('your-db-name');
+
+client.auth.loginWithCredential(new AnonymousCredential()).then(() => {
+  db.collection('your-collection-name').find().toArray().then(docs => {
+    console.log(docs);
+  });
+});
+
+
+//for sqlite
+import SQLite from 'react-native-sqlite-storage';
+
+const db = SQLite.openDatabase({
+  name: 'your-db-name',
+  location: 'default',
+});
+
+db.transaction(tx => {
+  tx.executeSql('SELECT * FROM your-table-name', [], (tx, results) => {
+    const len = results.rows.length;
+    for (let i = 0; i < len; i++) {
+      const row = results.rows.item(i);
+      console.log(row);
+    }
+  });
+});
+
+//for mysql
+import mysql from 'mysql2/promise';
+
+const connection = await mysql.createConnection({
+  host: 'your-host',
+  user: 'your-username',
+  password: 'your-password',
+  database: 'your-database',
+});
+
+// Example of a SELECT query
+const [rows, fields] = await connection.execute('SELECT * FROM your-table');
+console.log(rows);
+
+// Example of an INSERT query
+await connection.execute('INSERT INTO your-table (column1, column2) VALUES (?, ?)', ['value1', 'value2']);
+
+
+
+
+
+
+//firebase imageupload
+import storage from '@react-native-firebase/storage';
+import { Platform } from 'react-native';
+import { launchImageLibrary } from 'react-native-image-picker';
+
+const uploadImage = async () => {
+  const options = {
+    mediaType: 'photo',
+    maxWidth: 500,
+    maxHeight: 500,
+    quality: 1,
+  };
+
+  launchImageLibrary(options, async response => {
+    if (response.didCancel) {
+      console.log('User cancelled image picker');
+    } else if (response.error) {
+      console.log('ImagePicker Error: ', response.error);
+    } else {
+      const reference = storage().ref(`your-folder-name/${response.fileName}`);
+      await reference.putFile(Platform.OS === 'ios' ? response.uri.replace('file://', '') : response.uri);
+      const url = await reference.getDownloadURL();
+      console.log(url);
+    }
+  });
+};
+
+
+//cloudinary example
+import { launchImageLibrary } from 'react-native-image-picker';
+import { Cloudinary } from '@cloudinary/base';
+
+const cloudinary = new Cloudinary({
+  cloud: {
+    cloudName: 'your-cloud-name',
+    apiKey: 'your-api-key',
+    apiSecret: 'your-api-secret',
+  },
+});
+
+const uploadImage = async () => {
+  const options = {
+    mediaType: 'photo',
+    maxWidth: 500,
+    maxHeight: 500,
+    quality: 1,
+  };
+
+  launchImageLibrary(options, async response => {
+    if (response.didCancel) {
+      console.log('User cancelled image picker');
+    } else if (response.error) {
+      console.log('ImagePicker Error: ', response.error);
+    } else {
+      const file = Platform.OS === 'ios' ? response.uri.replace('file://', '') : response.uri;
+      const { public_id, secure_url } = await cloudinary.uploader.upload(file, {
+        folder: 'your-folder-name',
+      });
+      console.log(secure_url);
+    }
+  });
+};

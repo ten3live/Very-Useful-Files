@@ -1,0 +1,6 @@
+ten3live
+token
+pk.eyJ1IjoidGVuM2xpdmUiLCJhIjoiY2xlcGVwOGxvMDJpMzNycDF3MmppYTBuZSJ9.StSSLvF7bJRJGBjCL1WXLA
+import MapboxGL from '@rnmapbox/maps';
+MapboxGL.setWellKnownTileServer('Mapbox');
+MapboxGL.setAccessToken('pk.eyJ1IjoidGVuM2xpdmUiLCJhIjoiY2xlcGVwOGxvMDJpMzNycDF3MmppYTBuZSJ9.StSSLvF7bJRJGBjCL1WXLA')

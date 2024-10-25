@@ -1,0 +1,13 @@
+import Sound from 'react-native-sound';
+
+const audioFile = new Sound('your_audio_file.mp3', Sound.MAIN_BUNDLE, (error) => {
+  if (error) {
+    console.log('Failed to load the sound', error);
+    return;
+  }
+  console.log('Sound loaded successfully');
+});
+
+const playSound = () => {
+  audioFile.play();
+};

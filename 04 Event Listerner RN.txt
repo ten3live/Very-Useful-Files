@@ -1,0 +1,27 @@
+import React, { useRef, useEffect } from 'react';
+import { View, Button } from 'react-native';
+
+const MyComponent = () => {
+  const myButtonRef = useRef(null);
+
+  useEffect(() => {
+    const myButton = myButtonRef.current;
+    myButton.addEventListener('click', handleClick);
+
+    return () => {
+      myButton.removeEventListener('click', handleClick);
+    };
+  }, []);
+
+  const handleClick = () => {
+    console.log('Button clicked!');
+  };
+
+  return (
+    <View>
+      <Button ref={myButtonRef} title="Click me" />
+    </View>
+  );
+};
+
+export default MyComponent;

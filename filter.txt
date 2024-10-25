@@ -1,0 +1,51 @@
+import React, { useState } from 'react';
+import { View, Text, Button, FlatList } from 'react-native';
+
+const productsData = [
+  { id: '1', name: 'iPad', category: 'Tablet' },
+  { id: '2', name: 'iPhone', category: 'Mobile' },
+  { id: '3', name: 'MacBook', category: 'PC' },
+  { id: '4', name: 'Samsung Galaxy Tab', category: 'Tablet' },
+  { id: '5', name: 'Google Pixel', category: 'Mobile' },
+  { id: '6', name: 'Dell XPS', category: 'PC' },
+];
+
+const App = () => {
+  const [selectedCategory, setSelectedCategory] = useState('All');
+
+  const handleCategorySelect = (category) => {
+    setSelectedCategory(category);
+  };
+
+  const filteredProducts = productsData.filter((product) => {
+    if (selectedCategory === 'All') {
+      return true;
+    } else {
+      return product.category === selectedCategory;
+    }
+  });
+
+  return (
+    <View style={{ padding: 20 }}>
+      <Text style={{ fontSize: 20, marginBottom: 10 }}>Filter Products</Text>
+      <View style={{ flexDirection: 'row', marginBottom: 20 }}>
+        <Button title="All" onPress={() => handleCategorySelect('All')} />
+        <Button title="Tablet" onPress={() => handleCategorySelect('Tablet')} />
+        <Button title="Mobile" onPress={() => handleCategorySelect('Mobile')} />
+        <Button title="PC" onPress={() => handleCategorySelect('PC')} />
+      </View>
+      <FlatList
+        data={filteredProducts}
+        keyExtractor={(item) => item.id}
+        renderItem={({ item }) => (
+          <View style={{ marginBottom: 10 }}>
+            <Text style={{ fontSize: 18 }}>{item.name}</Text>
+            <Text style={{ fontSize: 16, color: 'gray' }}>{item.category}</Text>
+          </View>
+        )}
+      />
+    </View>
+  );
+};
+
+export default App;

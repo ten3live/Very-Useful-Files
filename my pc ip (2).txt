@@ -1,0 +1,8 @@
+ipconfig
+192.168.131.254
+
+
+adb reverse tcp:8081 tcp:8081
+
+my emulator ip
+10.0.2.2

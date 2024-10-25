@@ -1,0 +1,12 @@
+SMTP 
+sg2plzcpnl489587.prod.sin2.secureserver.net
+SMTP Port
+465
+username
+ten3live@hunzaexports.com
+password
+sajjadali7
+
+
+POP
+IMAP Port: 993 POP3 Port: 995

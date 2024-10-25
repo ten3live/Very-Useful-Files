@@ -1,0 +1,18 @@
+import React, {useState} from 'react';
+import {TextInput, Button, Linking} from 'react-native';
+
+const MyForm = () => {
+  const [url, setUrl] = useState('');
+
+  const handleSubmit = () => {
+    Linking.openURL(url);
+  };
+
+  return (
+    <>
+      <TextInput value={url} onChangeText={setUrl} />
+      <Button title="Open website" onPress={handleSubmit} />
+    </>
+  );
+};
+export default MyForm;

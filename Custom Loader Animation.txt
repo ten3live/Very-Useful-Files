@@ -1,0 +1,65 @@
+import React, { useRef, useEffect } from 'react';
+import { Animated, View, StyleSheet, Easing } from 'react-native';
+const RotatingLogo = ({ source }) => {
+  const spinValue = useRef(new Animated.Value(0)).current;
+
+  // Function to start the animation
+  const startRotation = () => {
+    spinValue.setValue(0); // Reset the animation value to 0
+    Animated.loop(
+      Animated.timing(spinValue, {
+        toValue: 1,
+        duration: 4000, // 4000 milliseconds for one full rotation
+        useNativeDriver: true,
+        easing: Easing.linear, // This will animate at a constant speed
+      })
+    ).start();
+  };
+
+  // Effect hook to start the animation
+  useEffect(() => {
+    startRotation();
+  }, []);
+
+  // Interpolate the animation value
+  const spin = spinValue.interpolate({
+    inputRange: [0, 1],
+    outputRange: ['-45deg', '360deg'] // Output range for the rotation
+  });
+
+  return (
+    <View style={styles.container}>
+      <Animated.Image
+        style={[styles.logo, { transform: [{ rotate: spin }] }]}
+        // source={source}
+        source={require('../assets/alpha.png')}
+      />
+    </View>
+  );
+};
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  logo: {
+    width: 100,
+    height: 100,
+  },
+});
+
+export default RotatingLogo
+// import { StyleSheet, Text, View } from 'react-native'
+// import React from 'react'
+// import LottieView from 'lottie-react-native'
+
+// export default function Loader() {
+//   return (
+//     <View style={{flex:1,padding:20,backgroundColor:'white'}}>
+//       <LottieView style={{flex:1,padding:20}} source={require('./lottie/abcd.json')} autoPlay loop />
+//     </View>
+//   )
+// }
+
+// const styles = StyleSheet.create({})

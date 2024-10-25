@@ -1,0 +1,25 @@
+https://api.cloudinary.com/v1_1/ten3live/upload
+
+headers
+Authorization : 866881953395489:DHG_S6I8Ann_QDK89pYbO6ah-TQ
+Content-Type: multipart/form-data
+
+
+formdata
+
+upload_preset:  sajjad
+file:   photo.jpg
+
+
+
+
+
+
+
+
+
+
+
+  cloud_name: "ten3live",
+  api_key: "866881953395489",
+  api_secret: "DHG_S6I8Ann_QDK89pYbO6ah-TQ"

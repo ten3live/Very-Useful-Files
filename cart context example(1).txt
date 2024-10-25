@@ -1,0 +1,110 @@
+//App.js
+import React from 'react';
+import { NavigationContainer } from '@react-navigation/native';
+import { createStackNavigator } from '@react-navigation/stack';
+import CartProvider from './CartContext';
+import Home from './Home';
+import Cart from './Cart';
+
+const Stack = createStackNavigator();
+
+function App() {
+  return (
+    <CartProvider>
+      <NavigationContainer>
+        <Stack.Navigator initialRouteName="Home">
+          <Stack.Screen name="Home" component={Home} />
+          <Stack.Screen name="Cart" component={Cart} />
+        </Stack.Navigator>
+      </NavigationContainer>
+    </CartProvider>
+  );
+}
+
+export default App;
+
+//Home.js
+import React, { useContext } from 'react';
+import { View, Text, Button } from 'react-native';
+import { CartContext } from './CartContext';
+
+export default function Home({ navigation }) {
+  const { addProduct } = useContext(CartContext);
+
+  const handlePress = () => {
+    addProduct({ id: 1, name: 'Product 1' });
+    navigation.navigate('Cart');
+  };
+
+  return (
+    <View>
+      <Text>Home</Text>
+      <Button title="Add to cart" onPress={handlePress} />
+    </View>
+  );
+}
+
+
+//Cart.js
+import React, { useContext } from 'react';
+import { View, Text, Button } from 'react-native';
+import { CartContext } from './CartContext';
+
+export default function Cart() {
+  const { products, removeProduct, updateProduct } = useContext(CartContext);
+
+  return (
+    <View>
+      <Text>Cart</Text>
+      {products.map(product => (
+        <View key={product.id}>
+          <Text>{product.name}</Text>
+          <Button
+            title="Remove"
+            onPress={() => removeProduct(product.id)}
+          />
+          <Button
+            title="Update"
+            onPress={() =>
+              updateProduct({ ...product, name: 'Updated Product Name' })
+            }
+          />
+        </View>
+      ))}
+    </View>
+  );
+}
+
+
+//CartContext.js
+import React, { createContext, useState } from 'react';
+
+export const CartContext = createContext();
+
+export default function CartProvider({ children }) {
+  const [products, setProducts] = useState([]);
+
+  const addProduct = product => {
+    setProducts([...products, product]);
+  };
+
+  const removeProduct = productId => {
+    setProducts(products.filter(product => product.id !== productId));
+  };
+
+  const updateProduct = updatedProduct => {
+    setProducts(
+      products.map(product =>
+        product.id === updatedProduct.id ? updatedProduct : product
+      )
+    );
+  };
+
+  return (
+    <CartContext.Provider
+      value={{ products, addProduct, removeProduct, updateProduct }}
+    >
+      {children}
+    </CartContext.Provider>
+  );
+}

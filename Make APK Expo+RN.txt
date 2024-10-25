@@ -1,0 +1,38 @@
+
+To create an APK file using the React Native CLI, you will first need to have Node.js and the React Native CLI installed on your computer. Once you have those set up, you can use the following steps:
+
+Create a new project using the React Native CLI by running the command react-native init [project-name] in your terminal.
+
+Once your project is created, navigate to the project's directory using the command cd [project-name].
+
+To run your project on an Android emulator or device, use the command react-native run-android. Make sure you have an android emulator or device connected to your computer
+
+To create the APK file, you'll need to use the command cd android and ./gradlew assembleRelease
+
+Once the process is done, you will find the apk file in the directory android/app/build/outputs/apk/release/app-release.apk
+
+Note: You need to have an android developer account and setup your react-native project properly for creating a release build.
+
+If you have any issues, you can refer to the React Native documentation for more information and troubleshooting tips: https://reactnative.dev/docs/getting-started
+
+
+
+
+
+
+To build an APK using the Expo CLI (eas-cli), you will first need to have Node.js and the Expo CLI installed on your computer. Once you have those set up, you can use the following steps:
+
+Create a new project using the Expo CLI by running the command expo init [project-name] in your terminal.
+
+Once your project is created, navigate to the project's directory using the command cd [project-name].
+
+To build the APK file, run the command expo build:android. This command will start the process of building an APK file for your project.
+
+Once the build process is complete, you can download the APK file from the Expo CLI by running the command expo fetch:android:hashes.
+
+The APK file will be downloaded to your computer and you can install it on an Android device to test it.
+
+Note: You need to have an android developer account and setup your expo account properly
+
+If you have any issues, you can refer to the Expo CLI documentation for more information and troubleshooting tips: https://docs.expo.io/versions/latest/workflow/expo-cli/
+

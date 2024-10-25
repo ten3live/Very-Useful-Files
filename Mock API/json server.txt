@@ -1,0 +1,36 @@
+Server
+We'll create a simple Node.js server that listens on port 3000 and serves a RESTful API for managing books. We'll use the json-server package to mock a database and provide a RESTful API for books. You can install json-server by running npm install -g json-server.
+
+Then run the following command to start the server:
+json-server --watch db.json --port 3000
+This will start a server at http://localhost:3000 that provides a RESTful API for managing books.
+
+
+
+Create a new file named db.json with the following content:
+
+{
+  "books": [
+    {
+      "id": 1,
+      "title": "The Great Gatsby",
+      "author": "F. Scott Fitzgerald",
+      "pages": 180
+    },
+    {
+      "id": 2,
+      "title": "To Kill a Mockingbird",
+      "author": "Harper Lee",
+      "pages": 281
+    },
+    {
+      "id": 3,
+      "title": "1984",
+      "author": "George Orwell",
+      "pages": 328
+    }
+  ]
+}
+
+
+

@@ -1,0 +1,7 @@
+    apiKey: "AIzaSyBnb81XCI5L0iiIAPG1dfsNH9D3x-O-awE",
+    authDomain: "free-97c68.firebaseapp.com",
+    projectId: "free-97c68",
+    storageBucket: "free-97c68.appspot.com",
+    messagingSenderId: "350396414837",
+    appId: "1:350396414837:web:c52ccec38bd7432a93313c",
+    measurementId: "G-D9BNE1KPZ6"

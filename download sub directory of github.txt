@@ -1,0 +1,17 @@
+Download Sub Directory from Github
+
+1Find the url of the directory. It can be something like 
+2Now, replace the tree/master with trunk
+3Now download the folder using SVN
+
+1
+https://github.com/susanli2016/Machine-Learning-with-Python/tree/master/data
+2
+https://github.com/susanli2016/Machine-Learning-with-Python/trunk/data
+3
+$ svn checkout https://github.com/susanli2016/Machine-Learning-with-Python/trunk/data
+
+
+or
+
+curl -L https://github.com/janosgyerik/jquery-upvote/tarball/master > project.tar.gz

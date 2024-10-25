@@ -1,0 +1,41 @@
+Use Services
+Disabling Windows Update is not recommended, as it can leave your computer vulnerable to security threats and prevent you from receiving important updates and patches. However, if you still wish to disable Windows Update in Windows 10, you can follow the steps below:
+
+Press the Windows key + R on your keyboard to open the Run dialog box.
+Type "services.msc" in the Run box and press Enter.
+Scroll down and find "Windows Update" in the list of services.
+Right-click on "Windows Update" and select "Properties".
+In the "Startup type" dropdown menu, select "Disabled".
+Click on the "Stop" button to stop the service.
+Click "Apply" and then "OK" to save your changes.
+
+
+
+Use Group Policy: If you have the Professional, Enterprise, or Education edition of Windows 10, you can use the Group Policy Editor to disable Windows Update. Here's how:
+
+a. Press the Windows key + R to open the Run dialog box.
+b. Type "gpedit.msc" in the Run box and press Enter.
+c. In the Group Policy Editor, navigate to Computer Configuration > Administrative Templates > Windows Components > Windows Update.
+d. Double-click on the "Configure Automatic Updates" policy.
+e. Select the "Disabled" option and click "Apply" and then "OK".
+
+Use the Registry Editor: If you have a Home edition of Windows 10, you can use the Registry Editor to disable Windows Update. Here's how:
+
+a. Press the Windows key + R to open the Run dialog box.
+b. Type "regedit" in the Run box and press Enter.
+c. In the Registry Editor, navigate to HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows.
+d. Right-click on the Windows folder and select "New" > "Key".
+e. Name the new key "WindowsUpdate" and press Enter.
+f. Right-click on the WindowsUpdate folder and select "New" > "DWORD (32-bit) Value".
+g. Name the new value "AUOptions" and press Enter.
+h. Double-click on the "AUOptions" value and set it to "2" (to disable automatic updates).
+i. Click "OK" to save your changes.
+
+
+
+Another way to prevent Windows 10 from downloading updates is to set your internet connection as metered. When you set your internet connection as metered, Windows 10 will not download updates automatically. Here's how to do it:
+
+Click on the Start menu and select "Settings".
+Click on "Network & Internet".
+Click on "Wi-Fi" or "Ethernet", depending on your type of internet connection.
+Click on your internet connection and turn on the "Set as metered connection" toggle switch.

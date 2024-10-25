@@ -1,0 +1,13 @@
+
+Control panel username:	b11_33645270
+Control panel password:	**********
+Control panel URL:	cpanel.byethost11.com
+MySQL username	b11_33645270
+MySQL password:	sajjadali7
+MySQL hostname:	sql205.byethost11.com
+FTP username:	b11_33645270
+FTP password:	**********
+FTP host name:	ftp.byethost11.com
+
+Your Website URL:	http://ten3live.byethost11.com
+ 	 

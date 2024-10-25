@@ -1,0 +1,37 @@
+for react 
+You can build an APK using Capacitor in an Ionic React project by following these steps:
+
+npm install @capacitor/core @capacitor/cli @capacitor/android
+
+npx cap init
+npx cap add android
+npx cap sync android
+
+npm run build
+npx cap copy android
+npx cap run android
+
+npx cap open android
+
+
+cd android
+gradlew assembleDebug
+gradlew assembleRelease
+
+
+This will create a release build of your app with the necessary optimizations for production. The APK file will be generated in the platforms/android/app/build/outputs/apk/release directory.
+
+Sign APK by
+
+keytool -genkey -v -keystore my-release-key.keystore -alias my-key-alias -keyalg RSA -keysize 2048 -validity 10000
+
+jarsigner -verbose -sigalg SHA1withRSA -digestalg SHA1 -keystore my-release-key.keystore my-app-unsigned.apk my-key-alias
+
+zipalign -v 4 my-app-unsigned.apk my-app.apk
+
+
+Environment Variable
+CAPACITOR_ANDROID_STUDIO_PATH
+E:\Program Files\Android\Android Studio\bin\
+Path
+E:\Program Files\Android\Android Studio\bin
