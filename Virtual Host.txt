@@ -1,0 +1,23 @@
+Go To :
+C:\xampp\apache\conf\extra\httpd-vhosts.conf
+
+Paste:
+
+<VirtualHost *:80>
+   DocumentRoot "C:\xampp\htdocs"
+   ServerName localhost
+ </VirtualHost>
+<VirtualHost *:80>
+   DocumentRoot "C:\xampp\htdocs\blog\public"
+   ServerName itc.com
+ </VirtualHost>
+
+Open NotePad as Administrator
+Goto: 
+C:\Windows\System32\drivers\etc
+Edit hosts file
+
+Paste :
+
+127.0.0.1 localhost
+127.0.0.1 itc.com
