@@ -1,0 +1,6 @@
+.page .entry-title{
+	display:none
+}
+
+
+
