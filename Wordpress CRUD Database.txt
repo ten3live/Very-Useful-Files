@@ -1,0 +1,178 @@
+In WordPress, you can create a form to perform full CRUD (Create, Read, Update, Delete) operations on a custom database table using custom PHP code. Here’s a guide to achieving this:
+
+Step 1: Set Up Your Custom Database Table
+First, you need to create a custom table in the WordPress database. You can use the dbDelta function, which is built into WordPress for handling database table creation. Place this code in your theme's functions.php file or create a custom plugin to keep it organized.
+
+
+function create_custom_table() {
+    global $wpdb;
+    $table_name = $wpdb->prefix . 'custom_data';
+    
+    if ($wpdb->get_var("SHOW TABLES LIKE '$table_name'") != $table_name) {
+        $charset_collate = $wpdb->get_charset_collate();
+
+        $sql = "CREATE TABLE $table_name (
+            id mediumint(9) NOT NULL AUTO_INCREMENT,
+            name varchar(255) NOT NULL,
+            email varchar(255) NOT NULL,
+            message text NOT NULL,
+            PRIMARY KEY  (id)
+        ) $charset_collate;";
+
+        require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
+        dbDelta($sql);
+    }
+}
+register_activation_hook(__FILE__, 'create_custom_table');
+
+
+
+
+
+
+Step 2: Create a Form to Save Data (Create Operation)
+You can use a shortcode to display the form on any page. The form will handle data submission through a POST request, which you’ll process and store in the database.
+
+Add this code to your theme’s functions.php file:
+
+
+
+
+function custom_form_shortcode() {
+    ob_start();
+    ?>
+    <form method="POST">
+        <label>Name: <input type="text" name="name" required></label><br>
+        <label>Email: <input type="email" name="email" required></label><br>
+        <label>Message: <textarea name="message" required></textarea></label><br>
+        <input type="submit" name="submit_form" value="Submit">
+    </form>
+    <?php
+
+    if (isset($_POST['submit_form'])) {
+        global $wpdb;
+        $table_name = $wpdb->prefix . 'custom_data';
+
+        $wpdb->insert($table_name, [
+            'name' => sanitize_text_field($_POST['name']),
+            'email' => sanitize_email($_POST['email']),
+            'message' => sanitize_textarea_field($_POST['message']),
+        ]);
+
+        echo "<p>Data saved successfully!</p>";
+    }
+
+    return ob_get_clean();
+}
+add_shortcode('custom_form', 'custom_form_shortcode');
+
+
+
+
+
+To display the form on a page, add the shortcode [custom_form] where you want it to appear.
+
+Step 3: Retrieve Data from the Database (Read Operation)
+To display the saved data, you can create another shortcode:
+
+
+
+function display_custom_data() {
+    global $wpdb;
+    $table_name = $wpdb->prefix . 'custom_data';
+    $results = $wpdb->get_results("SELECT * FROM $table_name");
+
+    ob_start();
+    if ($results) {
+        echo "<table border='1'>
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Message</th>
+                <th>Actions</th>
+            </tr>";
+        foreach ($results as $row) {
+            echo "<tr>
+                <td>{$row->id}</td>
+                <td>{$row->name}</td>
+                <td>{$row->email}</td>
+                <td>{$row->message}</td>
+                <td>
+                    <a href='?edit_id={$row->id}'>Edit</a> |
+                    <a href='?delete_id={$row->id}'>Delete</a>
+                </td>
+            </tr>";
+        }
+        echo "</table>";
+    } else {
+        echo "<p>No data found.</p>";
+    }
+
+    return ob_get_clean();
+}
+add_shortcode('display_custom_data', 'display_custom_data');
+
+
+
+
+Add the shortcode [display_custom_data] to any page to show the data in a table.
+
+Step 4: Update Data in the Database (Update Operation)
+Create an update form by checking if the edit_id parameter is present. Here’s how to handle updates in your shortcode:
+
+
+
+function update_custom_data() {
+    if (isset($_GET['edit_id'])) {
+        global $wpdb;
+        $table_name = $wpdb->prefix . 'custom_data';
+        $id = intval($_GET['edit_id']);
+        
+        if (isset($_POST['update_data'])) {
+            $wpdb->update(
+                $table_name,
+                [
+                    'name' => sanitize_text_field($_POST['name']),
+                    'email' => sanitize_email($_POST['email']),
+                    'message' => sanitize_textarea_field($_POST['message']),
+                ],
+                ['id' => $id]
+            );
+            echo "<p>Data updated successfully!</p>";
+        }
+
+        $row = $wpdb->get_row("SELECT * FROM $table_name WHERE id = $id");
+
+        if ($row) {
+            ?>
+            <form method="POST">
+                <label>Name: <input type="text" name="name" value="<?php echo esc_attr($row->name); ?>" required></label><br>
+                <label>Email: <input type="email" name="email" value="<?php echo esc_attr($row->email); ?>" required></label><br>
+                <label>Message: <textarea name="message" required><?php echo esc_textarea($row->message); ?></textarea></label><br>
+                <input type="submit" name="update_data" value="Update">
+            </form>
+            <?php
+        }
+    }
+}
+add_shortcode('update_custom_data', 'update_custom_data');
+
+
+
+
+Place [update_custom_data] shortcode where you want to display the update form.
+
+Step 5: Delete Data from the Database (Delete Operation)
+In the display shortcode, you’ve already created a delete link. Now, you need to process it.
+
+Add this code to the display_custom_data function:
+
+
+
+if (isset($_GET['delete_id'])) {
+    $delete_id = intval($_GET['delete_id']);
+    $wpdb->delete($table_name, ['id' => $delete_id]);
+    echo "<p>Data deleted successfully!</p>";
+}
+
