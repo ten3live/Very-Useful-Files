@@ -1,0 +1,37 @@
+Update Multiple
+<?php
+// Assume $userId is the ID of the user creating the book and $bookData contains book info
+// Step 1: Insert the new book
+$insertBook = "INSERT INTO books (title, author_id, description) VALUES (?, ?, ?)";
+$stmt = $pdo->prepare($insertBook);
+$stmt->execute([$bookData['title'], $userId, $bookData['description']]);
+
+// Step 2: Update user's book count
+$updateCount = "UPDATE users SET book_count = book_count + 1 WHERE user_id = ?";
+$stmt = $pdo->prepare($updateCount);
+$stmt->execute([$userId]);
+?>
+
+Join Books and USer to Show book with user
+
+<?php
+// Assume $bookId is the ID of the selected book
+$query = "
+    SELECT books.title, books.description, users.user_id, users.name, users.email, users.book_count
+    FROM books
+    JOIN users ON books.author_id = users.user_id
+    WHERE books.book_id = ?
+";
+$stmt = $pdo->prepare($query);
+$stmt->execute([$bookId]);
+
+$bookWithUser = $stmt->fetch(PDO::FETCH_ASSOC);
+?>
+
+<!-- Display Book and User Profile -->
+<h2><?php echo $bookWithUser['title']; ?></h2>
+<p><?php echo $bookWithUser['description']; ?></p>
+<h3>Author Profile</h3>
+<p>Name: <?php echo $bookWithUser['name']; ?></p>
+<p>Email: <?php echo $bookWithUser['email']; ?></p>
+<p>Total Books: <?php echo $bookWithUser['book_count']; ?></p>

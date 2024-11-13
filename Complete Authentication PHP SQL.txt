@@ -1,0 +1,139 @@
+Complete Reigstration and Login form and Functionality password hashed and Validation 
+Here’s a complete example for creating a Registration and Login form in PHP, along with validation, password hashing, and authentication.
+
+Database Setup
+Assume you have a users table with the following structure:
+
+CREATE TABLE users (
+    user_id INT PRIMARY KEY AUTO_INCREMENT,
+    name VARCHAR(100),
+    email VARCHAR(100) UNIQUE,
+    password VARCHAR(255),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+HTML/PHP Register
+<form action="register.php" method="POST">
+    <label>Name:</label>
+    <input type="text" name="name" required>
+    
+    <label>Email:</label>
+    <input type="email" name="email" required>
+    
+    <label>Password:</label>
+    <input type="password" name="password" required>
+    
+    <button type="submit">Register</button>
+</form>
+
+
+2. Register User with Validation and Password Hashing (register.php)
+
+<?php
+// Database connection
+$pdo = new PDO('mysql:host=localhost;dbname=your_database', 'username', 'password');
+
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    $name = trim($_POST['name']);
+    $email = trim($_POST['email']);
+    $password = trim($_POST['password']);
+
+    // Validation
+    if (empty($name) || empty($email) || empty($password)) {
+        echo "All fields are required.";
+        exit;
+    }
+    
+    if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        echo "Invalid email format.";
+        exit;
+    }
+    
+    if (strlen($password) < 6) {
+        echo "Password must be at least 6 characters long.";
+        exit;
+    }
+
+    // Check if email already exists
+    $stmt = $pdo->prepare("SELECT * FROM users WHERE email = ?");
+    $stmt->execute([$email]);
+    if ($stmt->fetch()) {
+        echo "Email is already registered.";
+        exit;
+    }
+
+    // Hash password
+    $hashedPassword = password_hash($password, PASSWORD_BCRYPT);
+
+    // Insert user into database
+    $stmt = $pdo->prepare("INSERT INTO users (name, email, password) VALUES (?, ?, ?)");
+    if ($stmt->execute([$name, $email, $hashedPassword])) {
+        echo "Registration successful!";
+    } else {
+        echo "Registration failed.";
+    }
+}
+?>
+
+
+HTML/PHP Login 
+<form action="login.php" method="POST">
+    <label>Email:</label>
+    <input type="email" name="email" required>
+    
+    <label>Password:</label>
+    <input type="password" name="password" required>
+    
+    <button type="submit">Login</button>
+</form>
+
+
+4. Login Functionality (login.php)
+<?php
+// Database connection
+$pdo = new PDO('mysql:host=localhost;dbname=your_database', 'username', 'password');
+session_start();
+
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    $email = trim($_POST['email']);
+    $password = trim($_POST['password']);
+
+    // Check if email exists
+    $stmt = $pdo->prepare("SELECT * FROM users WHERE email = ?");
+    $stmt->execute([$email]);
+    $user = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    if ($user && password_verify($password, $user['password'])) {
+        // Start user session
+        $_SESSION['user_id'] = $user['user_id'];
+        $_SESSION['name'] = $user['name'];
+        echo "Login successful!";
+    } else {
+        echo "Invalid email or password.";
+    }
+}
+?>
+
+
+
+5. Logout Functionality (logout.php)
+
+<?php
+session_start();
+session_unset();
+session_destroy();
+header("Location: login.php");
+exit;
+?>
+
+
+6 Home Page
+
+<?php
+session_start();
+if (!isset($_SESSION['user_id'])) {
+    header("Location: login.php");
+    exit;
+}
+?>
+
