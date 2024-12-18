@@ -1,0 +1,20 @@
+[user]
+	email = ten3live@gmail.com
+	name = Sajjad Ali
+[core]
+	editor = code --wait
+	autocrlf = true
+[filter "lfs"]
+	clean = git-lfs clean -- %f
+	smudge = git-lfs smudge -- %f
+	process = git-lfs filter-process
+	required = true
+[diff]
+	tool = vscode
+[difftool "vscode"]
+	cmd = "code --wait --diff $LOCAL $REMOTE "
+[alias]
+	a = add .
+	b = commit -m'First'
+	c = push origin master
+	unstage = restore --staged .
