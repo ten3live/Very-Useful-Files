@@ -1,1 +1,6 @@
-eas build --profile development --platform android
+npm i -g eas-cli
+eas login
+eas init
+eas build:configure
+eas build -p android --profile preview
+

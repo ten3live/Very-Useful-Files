@@ -1,0 +1,34 @@
+Method 1
+echo '<img src="path/to/image.jpg" alt="Description" loading="lazy">';
+
+Method 2
+echo '<img class="lazyload" data-src="path/to/image.jpg" src="placeholder.jpg" alt="Description">';
+
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+    let lazyImages = document.querySelectorAll("img.lazyload");
+
+    if ("IntersectionObserver" in window) {
+      let lazyImageObserver = new IntersectionObserver(function(entries, observer) {
+        entries.forEach(function(entry) {
+          if (entry.isIntersecting) {
+            let img = entry.target;
+            img.src = img.getAttribute("data-src");
+            img.classList.remove("lazyload");
+            lazyImageObserver.unobserve(img);
+          }
+        });
+      });
+
+      lazyImages.forEach(function(img) {
+        lazyImageObserver.observe(img);
+      });
+    } else {
+      // Fallback for browsers without IntersectionObserver support
+      lazyImages.forEach(function(img) {
+        img.src = img.getAttribute("data-src");
+        img.classList.remove("lazyload");
+      });
+    }
+  });
+</script>

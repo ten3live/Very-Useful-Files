@@ -1,0 +1,12 @@
+div {
+  display: flex; /* Makes the container a Flexbox container */
+  flex-direction: column; /* Stacks children vertically */
+  align-items: stretch; /* Stretches children to fill the container's width */
+  justify-content: flex-start; /* Aligns children at the top */
+  overflow: visible; /* Allows content to overflow the container */
+  position: relative; /* Positions children relative to the container */
+  background-color: transparent; /* No background color by default */
+  margin: 0; /* No margin by default */
+  padding: 0; /* No padding by default */
+  border: none; /* No border by default */
+}

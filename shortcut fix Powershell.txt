@@ -1,0 +1,12 @@
+$shortcuts = Get-ChildItem "H:\Play Games\Play Game" -Filter "*.lnk"
+
+foreach ($shortcut in $shortcuts) {
+    $shell = New-Object -ComObject WScript.Shell
+    $link = $shell.CreateShortcut($shortcut.FullName)
+    
+    # Check and update the target path
+    if ($link.TargetPath -like "G:\Play Games\*") {
+        $link.TargetPath = $link.TargetPath.Replace("G:\Play Games\", "H:\Play Games\") # Change this as necessary
+        $link.Save()
+    }
+}

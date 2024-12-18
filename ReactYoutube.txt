@@ -1,0 +1,79 @@
+All
+https://www.youtube.com/feeds/videos.xml?channel_id=UCran6gZ1SyggkAMTk9lr5NQ
+by Playlist
+https://www.youtube.com/feeds/videos.xml?playlist_id=PLiGrFSAT1J7JAjZV8vOUuG6_zXtR15peP
+
+
+
+
+
+In Package.json add at last
+  },
+  "proxy": "https://www.youtube.com"
+}
+
+
+
+
+
+
+import React, { useEffect, useState } from "react";
+
+function YouTubeVideos() {
+  const [videos, setVideos] = useState([]);
+
+  useEffect(() => {
+    // Fetch the XML data
+    fetch("/feeds/videos.xml?playlist_id=PLiGrFSAT1J7JAjZV8vOUuG6_zXtR15peP")
+      .then((response) => response.text())
+      .then((data) => {
+        // Parse the XML
+        const parser = new DOMParser();
+        const xmlDoc = parser.parseFromString(data, "text/xml");
+
+        // Extract video entries
+        const entries = xmlDoc.getElementsByTagName("entry");
+        const videosArray = Array.from(entries).map((entry) => {
+          const title = entry.getElementsByTagName("title")[0].textContent;
+          const videoId =
+            entry.getElementsByTagName("yt:videoId")[0].textContent;
+          const thumbnail = entry
+            .getElementsByTagName("media:thumbnail")[0]
+            .getAttribute("url");
+          const published =
+            entry.getElementsByTagName("published")[0].textContent;
+
+          return { title, videoId, thumbnail, published };
+        });
+
+        setVideos(videosArray);
+      })
+      .catch((error) => console.error("Error fetching data:", error));
+  }, []);
+
+  return (
+    <div className="video-list">
+      <h1>YouTube Videos</h1>
+      <div className="videos">
+        {videos.map((video, index) => (
+          <div key={index} className="video-card">
+            <h2>{video.title}</h2>
+            <iframe
+              width="80%"
+              height="500"
+              src={`https://www.youtube.com/embed/${video.videoId}`}
+              title={video.title}
+              frameBorder="0"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowFullScreen
+            ></iframe>
+            <p>Published: {new Date(video.published).toLocaleDateString()}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+export default YouTubeVideos;
+
