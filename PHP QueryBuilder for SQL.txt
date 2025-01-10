@@ -1,0 +1,53 @@
+class QueryBuilder {
+    private $table;
+    private $filters = [];
+    private $fields = '*';
+    private $order = '';
+    private $limit = '';
+
+    public function table($tableName) {
+        $this->table = $tableName;
+        return $this;
+    }
+
+    public function find($filters) {
+        $this->filters = $filters;
+        return $this;
+    }
+
+    public function select($fields) {
+        $this->fields = implode(', ', $fields);
+        return $this;
+    }
+
+    public function orderBy($field, $direction = 'ASC') {
+        $this->order = "ORDER BY $field $direction";
+        return $this;
+    }
+
+    public function limit($count) {
+        $this->limit = "LIMIT $count";
+        return $this;
+    }
+
+    public function get() {
+        $where = [];
+        foreach ($this->filters as $key => $value) {
+            $where[] = "$key = '$value'";
+        }
+        $whereClause = $where ? 'WHERE ' . implode(' AND ', $where) : '';
+        $query = "SELECT {$this->fields} FROM {$this->table} $whereClause {$this->order} {$this->limit}";
+        return $query; // Replace this with actual execution using PDO or mysqli.
+    }
+}
+
+// Usage
+$query = (new QueryBuilder())
+    ->table('users')
+    ->find(['status' => 'active'])
+    ->select(['id', 'name', 'email'])
+    ->orderBy('created_at', 'DESC')
+    ->limit(10)
+    ->get();
+
+echo $query;

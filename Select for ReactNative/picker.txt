@@ -1,0 +1,85 @@
+import React, { useState } from 'react';
+import styled from 'styled-components/native';
+import { Modal, View, Text, TouchableOpacity } from 'react-native';
+
+// Styled Components
+const Wrapper = styled.View`
+  flex: 1;
+  justify-content: center;
+  align-items: center;
+  background-color: #f9f9f9;
+`;
+
+const StyledPicker = styled.Picker`
+  height: 50px;
+  width: 200px;
+  background-color: white;
+  border-radius: 5px;
+  border-width: 2px;
+  border-color: #007bff;
+  color: #333;
+`;
+
+const StyledModalView = styled.View`
+  background-color: white;
+  padding: 20px;
+  border-radius: 10px;
+  align-items: center;
+  justify-content: center;
+  width: 80%;
+  box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.2);
+`;
+
+const Button = styled.TouchableOpacity`
+  background-color: #007bff;
+  padding: 10px 20px;
+  border-radius: 5px;
+  margin-top: 20px;
+`;
+
+const ModalButtonText = styled.Text`
+  color: white;
+  font-size: 16px;
+  text-align: center;
+`;
+
+const App = () => {
+  const [selectedValue, setSelectedValue] = useState("");
+  const [modalVisible, setModalVisible] = useState(false);
+
+  const handleValueChange = (itemValue) => {
+    setSelectedValue(itemValue);
+    setModalVisible(true);
+  };
+
+  const closeModal = () => {
+    setModalVisible(false);
+  };
+
+  return (
+    <Wrapper>
+      <StyledPicker
+        selectedValue={selectedValue}
+        onValueChange={handleValueChange}
+      >
+        <Picker.Item label="Select an option" value="" />
+        <Picker.Item label="Option 1" value="Option 1" />
+        <Picker.Item label="Option 2" value="Option 2" />
+        <Picker.Item label="Option 3" value="Option 3" />
+      </StyledPicker>
+
+      <Modal visible={modalVisible} transparent={true} animationType="slide">
+        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: 'rgba(0,0,0,0.5)' }}>
+          <StyledModalView>
+            <Text>Selected Value: {selectedValue}</Text>
+            <Button onPress={closeModal}>
+              <ModalButtonText>Close</ModalButtonText>
+            </Button>
+          </StyledModalView>
+        </View>
+      </Modal>
+    </Wrapper>
+  );
+};
+
+export default App;

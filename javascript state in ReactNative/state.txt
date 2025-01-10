@@ -1,0 +1,10 @@
+let state = { value: "Initial State" };
+
+const getState = () => state;
+
+const setState = (newState) => {
+  state = { ...state, ...newState };
+  console.log("State updated:", state);
+};
+
+export { getState, setState };

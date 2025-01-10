@@ -1,0 +1,23 @@
+DELIMITER //
+
+CREATE PROCEDURE place_order(IN p_product_id INT, IN p_quantity INT)
+BEGIN
+    -- Insert the order
+    INSERT INTO `order` (product_id, quantity)
+    VALUES (p_product_id, p_quantity);
+
+    -- Update the stock
+    UPDATE product
+    SET stock = stock - p_quantity
+    WHERE id = p_product_id;
+END //
+
+DELIMITER ;
+
+
+
+
+
+to run this example
+ 
+CALL place_order(1, 1);

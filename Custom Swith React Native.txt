@@ -1,0 +1,69 @@
+import React, { useState } from "react";
+import { View, Text, TouchableOpacity, StyleSheet, Animated } from "react-native";
+
+const CustomSwitch = () => {
+  const [isEnabled, setIsEnabled] = useState(false);
+  const [position] = useState(new Animated.Value(0)); // Animated value for knob position
+
+  const toggleSwitch = () => {
+    Animated.timing(position, {
+      toValue: isEnabled ? 0 : 1,
+      duration: 300,
+      useNativeDriver: false,
+    }).start();
+
+    setIsEnabled((prev) => !prev);
+  };
+
+  const knobPosition = position.interpolate({
+    inputRange: [0, 1],
+    outputRange: [2, 28], // Adjust based on switch size
+  });
+
+  const backgroundColor = position.interpolate({
+    inputRange: [0, 1],
+    outputRange: ["#ccc", "#4caf50"],
+  });
+
+  return (
+    <View style={styles.container}>
+      <Text style={styles.label}>{isEnabled ? "ON" : "OFF"}</Text>
+      <TouchableOpacity onPress={toggleSwitch} activeOpacity={0.8}>
+        <Animated.View
+          style={[styles.switch, { backgroundColor: backgroundColor }]}
+        >
+          <Animated.View
+            style={[styles.knob, { transform: [{ translateX: knobPosition }] }]}
+          />
+        </Animated.View>
+      </TouchableOpacity>
+    </View>
+  );
+};
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  label: {
+    fontSize: 18,
+    marginBottom: 20,
+  },
+  switch: {
+    width: 50,
+    height: 25,
+    borderRadius: 20,
+    justifyContent: "center",
+    paddingHorizontal: 2,
+  },
+  knob: {
+    width: 20,
+    height: 20,
+    borderRadius: 10,
+    backgroundColor: "#fff",
+  },
+});
+
+export default CustomSwitch;

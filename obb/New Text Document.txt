@@ -1,0 +1,68 @@
+import React, { useEffect, useState } from 'react';
+import { View, Image, FlatList, Text, ActivityIndicator } from 'react-native';
+import RNFS from 'react-native-fs';
+
+const App = () => {
+  const [files, setFiles] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  // URLs of the files to download
+  const filesToDownload = [
+    { id: '1', url: 'https://example.com/image1.jpg', type: 'image' },
+    { id: '2', url: 'https://example.com/video1.mp4', type: 'video' },
+  ];
+
+  useEffect(() => {
+    const downloadFiles = async () => {
+      try {
+        const downloadedFiles = [];
+        for (const file of filesToDownload) {
+          const filePath = `${RNFS.DocumentDirectoryPath}/${file.id}-${file.url.split('/').pop()}`;
+          // Check if the file already exists
+          const fileExists = await RNFS.exists(filePath);
+
+          if (!fileExists) {
+            await RNFS.downloadFile({
+              fromUrl: file.url,
+              toFile: filePath,
+            }).promise;
+          }
+
+          downloadedFiles.push({ ...file, path: `file://${filePath}` });
+        }
+        setFiles(downloadedFiles);
+      } catch (error) {
+        console.error('Error downloading files:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    downloadFiles();
+  }, []);
+
+  if (loading) {
+    return <ActivityIndicator size="large" color="#0000ff" />;
+  }
+
+  return (
+    <View style={{ flex: 1, padding: 10 }}>
+      <FlatList
+        data={files}
+        keyExtractor={(item) => item.id}
+        renderItem={({ item }) =>
+          item.type === 'image' ? (
+            <Image
+              source={{ uri: item.path }}
+              style={{ width: 100, height: 100, margin: 5 }}
+            />
+          ) : (
+            <Text style={{ margin: 5 }}>Video File: {item.path}</Text>
+          )
+        }
+      />
+    </View>
+  );
+};
+
+export default App;

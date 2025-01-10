@@ -1,0 +1,132 @@
+import React, { useState } from 'react';
+import styled from 'styled-components/native';
+import { Modal, View, Text, TouchableOpacity, ScrollView } from 'react-native';
+
+// Styled Components
+const Wrapper = styled.View`
+  flex: 1;
+  justify-content: center;
+  align-items: center;
+  background-color: #f9f9f9;
+`;
+
+const DropdownButton = styled.TouchableOpacity`
+  height: 50px;
+  width: 200px;
+  background-color: white;
+  border-radius: 5px;
+  border-width: 2px;
+  border-color: #007bff;
+  justify-content: center;
+  align-items: center;
+`;
+
+const DropdownButtonText = styled.Text`
+  color: #333;
+  font-size: 16px;
+`;
+
+const OptionList = styled.View`
+  position: absolute;
+  top: 70px;
+  width: 200px;
+  background-color: white;
+  border-radius: 5px;
+  border-width: 2px;
+  border-color: #007bff;
+  max-height: 150px;  /* Limits the height to show a scrollbar */
+  z-index: 1;
+`;
+
+const Option = styled.TouchableOpacity`
+  padding: 10px;
+  background-color: white;
+`;
+
+const OptionText = styled.Text`
+  color: #333;
+  font-size: 16px;
+`;
+
+const StyledModalView = styled.View`
+  background-color: white;
+  padding: 20px;
+  border-radius: 10px;
+  align-items: center;
+  justify-content: center;
+  width: 80%;
+  box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.2);
+`;
+
+const ModalButtonText = styled.Text`
+  color: white;
+  font-size: 16px;
+  text-align: center;
+`;
+
+const App = () => {
+  const [selectedValue, setSelectedValue] = useState('');
+  const [modalVisible, setModalVisible] = useState(false);
+  const [dropdownVisible, setDropdownVisible] = useState(false);
+
+  const options = [
+    'Option 1', 
+    'Option 2', 
+    'Option 3', 
+    'Option 4', 
+    'Option 5', 
+    'Option 6', 
+    'Option 7', 
+    'Option 8', 
+    'Option 9', 
+    'Option 10'
+  ];
+
+  const handleOptionSelect = (value) => {
+    setSelectedValue(value);
+    setDropdownVisible(false);
+    setModalVisible(true);
+  };
+
+  const closeModal = () => {
+    setModalVisible(false);
+  };
+
+  return (
+    <Wrapper>
+      {/* Dropdown Button */}
+      <DropdownButton onPress={() => setDropdownVisible(!dropdownVisible)}>
+        <DropdownButtonText>
+          {selectedValue ? selectedValue : 'Select an option'}
+        </DropdownButtonText>
+      </DropdownButton>
+
+      {/* Dropdown List with Vertical Scroll */}
+      {dropdownVisible && (
+        <OptionList>
+          <ScrollView>
+            {options.map((option) => (
+              <Option key={option} onPress={() => handleOptionSelect(option)}>
+                <OptionText>{option}</OptionText>
+              </Option>
+            ))}
+          </ScrollView>
+        </OptionList>
+      )}
+
+      {/* Modal */}
+      <Modal visible={modalVisible} transparent={true} animationType="slide">
+        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: 'rgba(0,0,0,0.5)' }}>
+          <StyledModalView>
+            <Text>Selected Value: {selectedValue}</Text>
+            <TouchableOpacity onPress={closeModal} style={{ marginTop: 20, padding: 10, backgroundColor: '#007bff', borderRadius: 5 }}>
+              <ModalButtonText>Close</ModalButtonText>
+            </TouchableOpacity>
+          </StyledModalView>
+        </View>
+      </Modal>
+    </Wrapper>
+  );
+};
+
+export default App;

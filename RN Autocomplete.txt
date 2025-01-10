@@ -1,0 +1,115 @@
+import React, { useState } from "react";
+import { View, TextInput, FlatList, Text, TouchableOpacity, StyleSheet } from "react-native";
+
+const AutoCompleteInput = ({ data, placeholder, onSelectItem }) => {
+  const [query, setQuery] = useState("");
+  const [filteredData, setFilteredData] = useState([]);
+
+  const handleInputChange = (text) => {
+    setQuery(text);
+    if (text) {
+      const matches = data.filter((item) =>
+        item.toLowerCase().includes(text.toLowerCase())
+      );
+      setFilteredData(matches);
+    } else {
+      setFilteredData([]);
+    }
+  };
+
+  const handleSelectItem = (item) => {
+    setQuery(item);
+    setFilteredData([]);
+    if (onSelectItem) {
+      onSelectItem(item);
+    }
+  };
+
+  return (
+    <View style={styles.container}>
+      <TextInput
+        style={styles.input}
+        placeholder={placeholder}
+        value={query}
+        onChangeText={handleInputChange}
+      />
+      {filteredData.length > 0 && (
+        <FlatList
+          data={filteredData}
+          keyExtractor={(item, index) => index.toString()}
+          renderItem={({ item }) => (
+            <TouchableOpacity onPress={() => handleSelectItem(item)}>
+              <Text style={styles.item}>{item}</Text>
+            </TouchableOpacity>
+          )}
+          style={styles.suggestionsList}
+        />
+      )}
+    </View>
+  );
+};
+
+const styles = StyleSheet.create({
+  container: {
+    width: "100%",
+  },
+  input: {
+    height: 40,
+    borderColor: "#ccc",
+    borderWidth: 1,
+    borderRadius: 5,
+    paddingHorizontal: 10,
+  },
+  suggestionsList: {
+    backgroundColor: "#fff",
+    borderColor: "#ccc",
+    borderWidth: 1,
+    borderTopWidth: 0,
+    maxHeight: 150,
+  },
+  item: {
+    padding: 10,
+    borderBottomColor: "#ccc",
+    borderBottomWidth: 1,
+  },
+});
+
+export default AutoCompleteInput;
+
+
+Usage
+
+import React from "react";
+import { View, StyleSheet } from "react-native";
+import AutoCompleteInput from "./AutoCompleteInput";
+
+const App = () => {
+  const jsonData = ["Apple", "Banana", "Cherry", "Date", "Grape", "Orange"];
+
+  const handleSelect = (item) => {
+    console.log("Selected Item:", item);
+  };
+
+  return (
+    <View style={styles.container}>
+      <AutoCompleteInput
+        data={jsonData}
+        placeholder="Type a fruit..."
+        onSelectItem={handleSelect}
+      />
+    </View>
+  );
+};
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    padding: 20,
+  },
+});
+
+export default App;
+
+

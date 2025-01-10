@@ -1,0 +1,10 @@
+START TRANSACTION;
+
+INSERT INTO `order` (product_id, quantity)
+VALUES (1, 1);
+
+UPDATE product
+SET stock = stock - 1
+WHERE id = 1;
+
+COMMIT;

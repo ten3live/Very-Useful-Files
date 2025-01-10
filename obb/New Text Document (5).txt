@@ -1,0 +1,26 @@
+import { unzip } from 'react-native-zip-archive';
+
+const extractOBBFile = async () => {
+  try {
+    const obbFilePath = `${OBB_PATH}/main.1.com.example.myapp.obb`;
+    const destinationPath = `${RNFS.ExternalStorageDirectoryPath}/Android/obb/com.example.myapp/extracted/`;
+
+    // Unzip the OBB file to a specific folder
+    const unzipped = await unzip(obbFilePath, destinationPath);
+
+    console.log('Extracted to:', unzipped);
+
+    // Now, you can use the extracted files
+  } catch (error) {
+    console.error('Error extracting OBB file:', error);
+  }
+};
+
+
+
+import { Image } from 'react-native';
+
+<Image
+  source={{ uri: 'file:///path_to_extracted_image/image1.jpg' }}
+  style={{ width: 100, height: 100 }}
+/>

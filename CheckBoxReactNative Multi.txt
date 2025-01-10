@@ -1,0 +1,72 @@
+import React, { useState } from "react";
+import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
+
+const CheckboxGroup = () => {
+  const [selectedOptions, setSelectedOptions] = useState([]);
+
+  const options = ["Option 1", "Option 2", "Option 3"];
+
+  const toggleOption = (option) => {
+    if (selectedOptions.includes(option)) {
+      setSelectedOptions(selectedOptions.filter((item) => item !== option));
+    } else {
+      setSelectedOptions([...selectedOptions, option]);
+    }
+  };
+
+  return (
+    <View style={styles.container}>
+      {options.map((option, index) => (
+        <View key={index} style={styles.optionContainer}>
+          <TouchableOpacity
+            onPress={() => toggleOption(option)}
+            style={[
+              styles.checkbox,
+              selectedOptions.includes(option) && styles.checked,
+            ]}
+          >
+            {selectedOptions.includes(option) && (
+              <Text style={styles.checkmark}>✓</Text>
+            )}
+          </TouchableOpacity>
+          <Text style={styles.label}>{option}</Text>
+        </View>
+      ))}
+    </View>
+  );
+};
+
+const styles = StyleSheet.create({
+  container: {
+    marginTop: 50,
+    padding: 10,
+  },
+  optionContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 10,
+  },
+  checkbox: {
+    width: 25,
+    height: 25,
+    borderWidth: 2,
+    borderColor: "#ccc",
+    borderRadius: 5,
+    justifyContent: "center",
+    alignItems: "center",
+    marginRight: 10,
+  },
+  checked: {
+    backgroundColor: "#4caf50",
+    borderColor: "#4caf50",
+  },
+  checkmark: {
+    color: "#fff",
+    fontWeight: "bold",
+  },
+  label: {
+    fontSize: 16,
+  },
+});
+
+export default CheckboxGroup;

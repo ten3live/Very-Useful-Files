@@ -1,0 +1,142 @@
+import React, { useState } from 'react';
+import { View, Text, TouchableOpacity, FlatList, StyleSheet, Modal } from 'react-native';
+
+const CustomDropdown = ({ options, onSelect, placeholder = "Select an option", style }) => {
+  const [isDropdownVisible, setDropdownVisible] = useState(false);
+  const [selectedOption, setSelectedOption] = useState(null);
+
+  const handleSelect = (option) => {
+    setSelectedOption(option);
+    setDropdownVisible(false);
+    onSelect(option);
+  };
+
+  return (
+    <View style={[styles.container, style]}>
+      {/* Selected Option */}
+      <TouchableOpacity
+        style={styles.dropdownHeader}
+        onPress={() => setDropdownVisible(!isDropdownVisible)}
+      >
+        <Text style={styles.selectedText}>
+          {selectedOption ? selectedOption.label : placeholder}
+        </Text>
+      </TouchableOpacity>
+
+      {/* Dropdown Options */}
+      <Modal
+        transparent={true}
+        visible={isDropdownVisible}
+        animationType="fade"
+        onRequestClose={() => setDropdownVisible(false)}
+      >
+        <TouchableOpacity
+          style={styles.overlay}
+          onPress={() => setDropdownVisible(false)}
+        />
+        <View style={styles.dropdown}>
+          <FlatList
+            data={options}
+            keyExtractor={(item) => item.value.toString()}
+            renderItem={({ item }) => (
+              <TouchableOpacity
+                style={styles.dropdownItem}
+                onPress={() => handleSelect(item)}
+              >
+                <Text style={styles.itemText}>{item.label}</Text>
+              </TouchableOpacity>
+            )}
+          />
+        </View>
+      </Modal>
+    </View>
+  );
+};
+
+const styles = StyleSheet.create({
+  container: {
+    marginVertical: 10,
+  },
+  dropdownHeader: {
+    padding: 10,
+    borderWidth: 1,
+    borderColor: '#ccc',
+    borderRadius: 5,
+    backgroundColor: '#fff',
+  },
+  selectedText: {
+    fontSize: 16,
+    color: '#333',
+  },
+  overlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+  },
+  dropdown: {
+    position: 'absolute',
+    top: '50%',
+    left: '10%',
+    right: '10%',
+    backgroundColor: 'white',
+    borderRadius: 5,
+    padding: 10,
+    maxHeight: 200,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+    elevation: 5,
+  },
+  dropdownItem: {
+    padding: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: '#eee',
+  },
+  itemText: {
+    fontSize: 16,
+    color: '#333',
+  },
+});
+
+export default CustomDropdown;
+
+
+
+Usage
+
+import React from 'react';
+import { View, StyleSheet } from 'react-native';
+import CustomDropdown from './CustomDropdown';
+
+const App = () => {
+  const options = [
+    { label: 'Option 1', value: '1' },
+    { label: 'Option 2', value: '2' },
+    { label: 'Option 3', value: '3' },
+  ];
+
+  const handleSelect = (selectedOption) => {
+    console.log('Selected option:', selectedOption);
+  };
+
+  return (
+    <View style={styles.container}>
+      <CustomDropdown
+        options={options}
+        onSelect={handleSelect}
+        placeholder="Select an option"
+      />
+    </View>
+  );
+};
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#f0f0f0',
+  },
+});
+
+export default App;

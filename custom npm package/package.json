@@ -1,0 +1,8 @@
+{
+  "name": "tahiriservices",
+  "version": "1.0.2",
+  "description": "A React Native Styling Library",
+  "main": "tahiriservices.js",
+  "author": "Sajjad Ali",
+  "license": "ISC"
+}

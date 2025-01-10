@@ -1,0 +1,51 @@
+import React, { useState, useEffect } from 'react';
+import { View, Text } from 'react-native';
+import axios from 'axios';
+import RNFS from 'react-native-fs';
+import { Obb } from 'react-native-obb';
+
+const App = () => {
+  const [obbData, setObbData] = useState(null);
+
+  useEffect(() => {
+    const downloadObbFile = async () => {
+      try {
+        const obbUrl = '(link unavailable)';
+        const obbPath = `${RNFS.DocumentDirectoryPath}/main.obb`;
+
+        const response = await axios.get(obbUrl, { responseType: 'arraybuffer' });
+        await RNFS.writeFile(obbPath, response.data, 'base64');
+
+        console.log('OBB file downloaded successfully!');
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    const loadObbFile = async () => {
+      try {
+        const obbPath = `${RNFS.DocumentDirectoryPath}/main.obb`;
+        const obbData = await Obb.extractObbFile(obbPath);
+
+        console.log('OBB file loaded successfully!');
+        setObbData(obbData);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    downloadObbFile().then(() => loadObbFile());
+  }, []);
+
+  return (
+    <View>
+      {obbData ? (
+        <Text>OBB file loaded successfully!</Text>
+      ) : (
+        <Text>Loading OBB file...</Text>
+      )}
+    </View>
+  );
+};
+
+export default App;

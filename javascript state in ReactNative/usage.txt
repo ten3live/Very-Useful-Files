@@ -1,0 +1,20 @@
+import React, { useState } from 'react';
+import { View, Text, Button } from 'react-native';
+import { getState, setState } from './stateManager';
+
+const ComponentA = () => {
+  const updateState = () => setState({ value: "Updated from ComponentA" });
+
+  return <Button title="Update State" onPress={updateState} />;
+};
+
+const ComponentB = () => {
+  const [localState, setLocalState] = useState(getState().value);
+
+  return (
+    <View>
+      <Text>{localState}</Text>
+      <Button title="Refresh State" onPress={() => setLocalState(getState().value)} />
+    </View>
+  );
+};

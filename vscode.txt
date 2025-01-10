@@ -1,0 +1,21 @@
+To search for the pattern useEffect{ something }() in VSCode, you can use the following search query:
+
+useEffect\{.*?\}\(\)
+
+Here's how to break it down:
+
+- useEffect: Matches the literal text "useEffect".
+- \{: Matches the opening curly brace.
+- .*?: Matches any characters (including none) in a non-greedy way.
+- \}: Matches the closing curly brace.
+- \(: Matches the opening parenthesis.
+- \) : Matches the closing parenthesis.
+
+To search for this pattern in VSCode:
+
+1. Open the Find Widget by pressing Ctrl + F (Windows/Linux) or Cmd + F (Mac).
+2. Make sure the ".*" button is enabled to toggle regex search on.
+3. Paste the search query useEffect\{.*?\}\(\) into the Find input box.
+4. Press Enter to start the search.
+
+VSCode will now search for all occurrences of the useEffect hook with any code inside the curly braces, followed by an empty pair of parentheses.
