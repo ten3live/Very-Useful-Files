@@ -1,0 +1,51 @@
+Yes, it is possible to run React Native apps on your mobile device over Wi-Fi using ADB. Here’s how you can set it up:
+
+Steps to Enable ADB Over Wi-Fi
+Connect Your Device via USB
+
+Plug your mobile device into your laptop using a USB cable.
+Ensure that USB Debugging is enabled on your mobile device.
+Verify ADB Connection
+
+Open a terminal or command prompt on your laptop and type:
+bash
+Copy code
+adb devices
+Your device should appear in the list.
+Enable ADB Over Wi-Fi
+
+Run the following command to get your device's IP address:
+bash
+Copy code
+adb shell ip addr show wlan0
+Look for your device's IP address (e.g., 192.168.1.5).
+Disconnect the USB cable.
+Connect ADB to Your Device Over Wi-Fi
+
+Use the following command to connect to your device:
+bash
+Copy code
+adb connect 192.168.137.75:24
+Replace <device-ip> with the IP address of your device.
+Verify the Wi-Fi Connection
+
+Run the adb devices command again to ensure your device is connected over Wi-Fi.
+Run Your React Native App
+
+Start the React Native development server:
+bash
+Copy code
+npx react-native start
+Run the app on your device:
+bash
+Copy code
+npx react-native run-android
+Notes
+Both your mobile device and your laptop must be on the same Wi-Fi network for this to work.
+If your Wi-Fi network changes, you might need to reconnect your device using the steps above.
+If you encounter issues, try restarting the adb server:
+bash
+Copy code
+adb kill-server
+adb start-server
+Let me know if you face any issues!

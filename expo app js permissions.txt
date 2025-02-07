@@ -1,0 +1,23 @@
+{
+  "expo": {
+    "android": {
+      "usesCleartextTraffic": true,
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#ffffff",
+        "permissions": [
+          "INTERNET",
+          "SYSTEM_ALERT_WINDOW",
+          "CAMERA",
+          "CHANGE_NETWORK_STATE",
+          "MODIFY_AUDIO_SETTINGS",
+          "RECORD_AUDIO",
+          "WRITE_EXTERNAL_STORAGE",
+          "READ_EXTERNAL_STORAGE",
+          "ACCESS_NETWORK_STATE",
+          "BLUETOOTH",
+          "BLUETOOTH_ADMIN"
+        ]
+      },
+  }
+}

@@ -1,0 +1,46 @@
+Address.js
+const Address = "localhost";
+export default Address;
+
+
+
+
+const url = "https://your-host.com/Address.js";
+
+import(url)
+  .then((module) => {
+    const Address = module.default;
+    console.log(Address); // Outputs "localhost"
+  })
+  .catch((error) => {
+    console.error("Error loading module:", error);
+  });
+
+
+
+
+if JSON
+Address.json
+
+{
+  "Address": "localhost"
+}
+
+
+
+
+
+fetch("https://your-host.com/Address.json")
+  .then((response) => response.json())
+  .then((data) => {
+    const Address = data.Address;
+    console.log(Address); // Outputs "localhost"
+  })
+  .catch((error) => {
+    console.error("Error fetching address:", error);
+  });
+
+
+
+
+

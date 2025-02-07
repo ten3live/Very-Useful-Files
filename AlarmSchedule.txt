@@ -1,0 +1,116 @@
+import React, { useState, useEffect } from 'react';
+import { View, Text, TextInput, Button, StyleSheet, Alert } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
+const App = () => {
+  const [targetDate, setTargetDate] = useState('');
+  const [inputValue, setInputValue] = useState('');
+  const [frequency, setFrequency] = useState('daily');
+
+  const frequencies = {
+    daily: 24 * 60 * 60 * 1000,
+    weekly: 7 * 24 * 60 * 60 * 1000,
+    monthly: 30 * 24 * 60 * 60 * 1000,
+    yearly: 365 * 24 * 60 * 60 * 1000,
+  };
+
+  const scheduleDate = async () => {
+    try {
+      const now = new Date().getTime();
+      const timeToAdd = frequencies[frequency];
+      const newTargetDate = new Date(now + timeToAdd);
+      setTargetDate(newTargetDate.toISOString());
+      await AsyncStorage.setItem('targetDate', newTargetDate.toISOString());
+      Alert.alert('Scheduled', `Task scheduled for ${newTargetDate}`);
+    } catch (error) {
+      console.error('Error scheduling the date:', error);
+    }
+  };
+
+  const checkTargetDate = async () => {
+    try {
+      const storedDate = await AsyncStorage.getItem('targetDate');
+      if (storedDate) {
+        const now = new Date();
+        const target = new Date(storedDate);
+
+        if (now >= target) {
+          console.log('The scheduled function runs now');
+          Alert.alert('Alert', 'The scheduled function is running!');
+          await AsyncStorage.removeItem('targetDate');
+
+          // Reschedule for the next interval
+          const timeToAdd = frequencies[frequency];
+          const nextTargetDate = new Date(now.getTime() + timeToAdd);
+          setTargetDate(nextTargetDate.toISOString());
+          await AsyncStorage.setItem('targetDate', nextTargetDate.toISOString());
+        }
+      }
+    } catch (error) {
+      console.error('Error checking target date:', error);
+    } finally {
+      // Schedule the next check for 24 hours later
+      const now = new Date();
+      const nextCheck = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1, 0, 0, 0).getTime() - now.getTime();
+      setTimeout(checkTargetDate, nextCheck); // Set timeout for the next day at midnight
+    }
+  };
+
+  useEffect(() => {
+    checkTargetDate(); // Start the daily check
+  }, []);
+
+  return (
+    <View style={styles.container}>
+      <Text style={styles.heading}>Schedule Task</Text>
+      <TextInput
+        style={styles.input}
+        placeholder="Enter Frequency (daily, weekly, monthly, yearly)"
+        value={inputValue}
+        onChangeText={(text) => setInputValue(text.toLowerCase())}
+      />
+      <Button
+        title="Set Frequency"
+        onPress={() => {
+          if (frequencies[inputValue]) {
+            setFrequency(inputValue);
+            Alert.alert('Frequency Set', `Frequency set to ${inputValue}`);
+          } else {
+            Alert.alert('Error', 'Invalid frequency. Choose daily, weekly, monthly, or yearly.');
+          }
+        }}
+      />
+      <Button title="Schedule Date" onPress={scheduleDate} />
+      <Text style={styles.info}>
+        Current Target Date: {targetDate || 'Not Set'}
+      </Text>
+    </View>
+  );
+};
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    padding: 20,
+    justifyContent: 'center',
+  },
+  heading: {
+    fontSize: 24,
+    marginBottom: 20,
+    textAlign: 'center',
+  },
+  input: {
+    borderWidth: 1,
+    borderColor: '#ccc',
+    padding: 10,
+    marginBottom: 20,
+    borderRadius: 5,
+  },
+  info: {
+    marginTop: 20,
+    fontSize: 16,
+    textAlign: 'center',
+  },
+});
+
+export default App;

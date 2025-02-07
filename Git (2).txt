@@ -1,3 +1,5 @@
+git config --global --add safe.directory 'D:/Developer Tools/Very-Useful-Files'
+
 git init
 git add README.md
 git commit -m "first commit"

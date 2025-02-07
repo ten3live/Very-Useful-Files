@@ -1,0 +1,167 @@
+import React, { useState, useEffect } from 'react';
+import {
+  View,
+  Text,
+  Button,
+  StyleSheet,
+  Alert,
+  Vibration,
+  Switch,
+} from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import DateTimePicker from '@react-native-community/datetimepicker';
+
+const App = () => {
+  const [alarmTime, setAlarmTime] = useState(new Date());
+  const [selectedDays, setSelectedDays] = useState({
+    Sunday: false,
+    Monday: false,
+    Tuesday: false,
+    Wednesday: false,
+    Thursday: false,
+    Friday: false,
+    Saturday: false,
+  });
+  const [showPicker, setShowPicker] = useState(false);
+
+  const saveAlarm = async () => {
+    try {
+      const alarmData = {
+        time: alarmTime.toISOString(),
+        days: selectedDays,
+      };
+      await AsyncStorage.setItem('alarmData', JSON.stringify(alarmData));
+      Alert.alert('Alarm Set', `Alarm set for ${alarmTime.toLocaleTimeString()} on selected days.`);
+      scheduleNextCheck();
+    } catch (error) {
+      console.error('Error saving alarm data:', error);
+    }
+  };
+
+  const loadAlarm = async () => {
+    try {
+      const alarmData = await AsyncStorage.getItem('alarmData');
+      if (alarmData) {
+        const parsedData = JSON.parse(alarmData);
+        setAlarmTime(new Date(parsedData.time));
+        setSelectedDays(parsedData.days);
+      }
+    } catch (error) {
+      console.error('Error loading alarm data:', error);
+    }
+  };
+
+  const checkAlarm = () => {
+    const now = new Date();
+    const currentDay = Object.keys(selectedDays)[now.getDay()];
+    const isDaySelected = selectedDays[currentDay];
+
+    if (isDaySelected) {
+      const [alarmHour, alarmMinute] = [
+        alarmTime.getHours(),
+        alarmTime.getMinutes(),
+      ];
+
+      if (
+        now.getHours() === alarmHour &&
+        now.getMinutes() === alarmMinute
+      ) {
+        triggerAlarm();
+      }
+    }
+
+    scheduleNextCheck();
+  };
+
+  const scheduleNextCheck = () => {
+    const now = new Date();
+    const nextCheckTime = new Date(
+      now.getFullYear(),
+      now.getMonth(),
+      now.getDate(),
+      now.getHours(),
+      now.getMinutes() + 1,
+      0,
+      0
+    ).getTime();
+
+    const delay = nextCheckTime - now.getTime();
+    setTimeout(checkAlarm, delay);
+  };
+
+  const triggerAlarm = () => {
+    Vibration.vibrate([500, 500, 500]);
+    Alert.alert('Alarm', 'It’s time!');
+  };
+
+  useEffect(() => {
+    loadAlarm();
+    scheduleNextCheck();
+  }, []);
+
+  return (
+    <View style={styles.container}>
+      <Text style={styles.heading}>Set Alarm</Text>
+
+      <Button
+        title={`Set Alarm Time: ${alarmTime.toLocaleTimeString()}`}
+        onPress={() => setShowPicker(true)}
+      />
+
+      {showPicker && (
+        <DateTimePicker
+          value={alarmTime}
+          mode="time"
+          is24Hour={true}
+          display="default"
+          onChange={(event, selectedDate) => {
+            setShowPicker(false);
+            if (selectedDate) {
+              setAlarmTime(selectedDate);
+            }
+          }}
+        />
+      )}
+
+      <Text style={styles.subheading}>Select Days:</Text>
+      {Object.keys(selectedDays).map((day) => (
+        <View key={day} style={styles.daySwitch}>
+          <Text>{day}</Text>
+          <Switch
+            value={selectedDays[day]}
+            onValueChange={(value) =>
+              setSelectedDays((prev) => ({ ...prev, [day]: value }))
+            }
+          />
+        </View>
+      ))}
+
+      <Button title="Save Alarm" onPress={saveAlarm} />
+    </View>
+  );
+};
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    padding: 20,
+    justifyContent: 'center',
+  },
+  heading: {
+    fontSize: 24,
+    marginBottom: 20,
+    textAlign: 'center',
+  },
+  subheading: {
+    fontSize: 18,
+    marginTop: 20,
+  },
+  daySwitch: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginVertical: 5,
+  },
+});
+
+export default App;
